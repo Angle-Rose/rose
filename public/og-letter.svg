@@ -1,22 +1,17 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#fffbfd" />
-      <stop offset="0.55" stop-color="#f9e3ec" />
-      <stop offset="1" stop-color="#f3d6e6" />
+      <stop offset="0" stop-color="#ffffff" />
+      <stop offset="0.55" stop-color="#ffe0ef" />
+      <stop offset="1" stop-color="#f9aecd" />
     </linearGradient>
-    <radialGradient id="glowA" cx="0.22" cy="0.18" r="0.62">
-      <stop offset="0" stop-color="#ffffff" stop-opacity="0.9" />
-      <stop offset="1" stop-color="#ffffff" stop-opacity="0" />
-    </radialGradient>
     <linearGradient id="heart" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#c9649c" />
-      <stop offset="1" stop-color="#5a2a5a" />
+      <stop offset="0" stop-color="#e070a8" />
+      <stop offset="1" stop-color="#c9528d" />
     </linearGradient>
   </defs>
 
   <rect width="1200" height="630" fill="url(#bg)" />
-  <rect width="1200" height="630" fill="url(#glowA)" />
 
   <text
     x="600"
@@ -24,7 +19,7 @@
     text-anchor="middle"
     font-family="Georgia, 'Times New Roman', serif"
     font-size="118"
-    fill="#3a2347"
+    fill="#1c1218"
   >For Jasper</text>
 
   <text
@@ -34,23 +29,20 @@
     font-family="Georgia, 'Times New Roman', serif"
     font-size="46"
     font-style="italic"
-    fill="#c9649c"
+    fill="#c9528d"
   >a letter, sealed in pink</text>
 
   <path
     d="M600 372c-24-30-56-30-56-8 0 14 16 26 56 56 40-30 56-42 56-56 0-22-32-22-56 8Z"
     fill="url(#heart)"
   />
-  <path
-    d="M320 552c-9-11-21-11-21-3 0 5 6 10 21 21 15-11 21-16 21-21 0-8-12-8-21 3Z"
-    fill="url(#heart)"
-    opacity="0.55"
-  />
-  <path
-    d="M880 552c-9-11-21-11-21-3 0 5 6 10 21 21 15-11 21-16 21-21 0-8-12-8-21 3Z"
-    fill="url(#heart)"
-    opacity="0.55"
-  />
+
+  <g fill="#e0bd7c" opacity="0.9">
+    <path d="M318 258l5 13 13 5-13 5-5 13-5-13-13-5 13-5z" />
+    <path d="M886 268l4 10 10 4-10 4-4 10-4-10-10-4 10-4z" />
+    <path d="M228 470l3 8 8 3-8 3-3 8-3-8-8-3 8-3z" />
+    <path d="M972 462l3 8 8 3-8 3-3 8-3-8-8-3 8-3z" />
+  </g>
 
   <text
     x="600"
@@ -59,6 +51,11 @@
     font-family="Georgia, 'Times New Roman', serif"
     font-size="30"
     font-style="italic"
-    fill="#5a2a5a"
+    fill="#1c1218"
   >Forever yours, Jenirose</text>
+
+  <g fill="url(#heart)" opacity="0.6">
+    <path d="M320 552c-9-11-21-11-21-3 0 5 6 10 21 21 15-11 21-16 21-21 0-8-12-8-21 3Z" />
+    <path d="M880 552c-9-11-21-11-21-3 0 5 6 10 21 21 15-11 21-16 21-21 0-8-12-8-21 3Z" />
+  </g>
 </svg>

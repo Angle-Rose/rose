@@ -54,29 +54,29 @@ vec3 actPalette(float idx) {
   float t = clamp(fract(idx), 0.0, 1.0);
   vec3 a, b, c, d, e;
   if (i < 0.5) {
-    a = vec3(0.780, 0.651, 0.769);
-    b = vec3(0.847, 0.729, 0.824);
-    c = vec3(0.902, 0.800, 0.871);
-    d = vec3(0.945, 0.863, 0.906);
-    e = vec3(0.980, 0.937, 0.953);
+    a = vec3(1.000, 1.000, 1.000);
+    b = vec3(1.000, 0.965, 0.980);
+    c = vec3(1.000, 0.918, 0.953);
+    d = vec3(1.000, 0.878, 0.933);
+    e = vec3(0.984, 0.847, 0.918);
   } else if (i < 1.5) {
-    a = vec3(0.894, 0.749, 0.788);
-    b = vec3(0.937, 0.812, 0.839);
-    c = vec3(0.961, 0.863, 0.886);
-    d = vec3(0.973, 0.906, 0.925);
-    e = vec3(0.984, 0.949, 0.961);
+    a = vec3(1.000, 0.976, 0.988);
+    b = vec3(1.000, 0.937, 0.965);
+    c = vec3(1.000, 0.886, 0.937);
+    d = vec3(1.000, 0.831, 0.902);
+    e = vec3(0.988, 0.780, 0.867);
   } else if (i < 2.5) {
-    a = vec3(0.769, 0.651, 0.824);
-    b = vec3(0.839, 0.745, 0.902);
-    c = vec3(0.890, 0.824, 0.933);
-    d = vec3(0.933, 0.886, 0.949);
-    e = vec3(0.973, 0.945, 0.976);
+    a = vec3(1.000, 0.949, 0.973);
+    b = vec3(1.000, 0.894, 0.941);
+    c = vec3(1.000, 0.827, 0.894);
+    d = vec3(1.000, 0.761, 0.851);
+    e = vec3(0.976, 0.686, 0.808);
   } else {
-    a = vec3(0.890, 0.761, 0.824);
-    b = vec3(0.937, 0.796, 0.839);
-    c = vec3(0.965, 0.902, 0.800);
-    d = vec3(0.984, 0.949, 0.878);
-    e = vec3(1.000, 0.980, 0.949);
+    a = vec3(1.000, 0.988, 0.992);
+    b = vec3(1.000, 0.945, 0.965);
+    c = vec3(1.000, 0.902, 0.937);
+    d = vec3(1.000, 0.863, 0.910);
+    e = vec3(0.996, 0.816, 0.878);
   }
   float s = t * 4.0;
   vec3 r = mix(a, b, clamp(s, 0.0, 1.0));
@@ -149,8 +149,35 @@ vec4 bloomHeart(vec2 uv, float open, float t, out float halo) {
   c = mix(c, gold, rim * 0.75);
   c += mix(pink, gold, 0.5) * spark;
 
-  float a = body * mix(0.42, 0.92, ap);
-  return vec4(c * (1.0 - smoothstep(0.88, 1.0, o)) * step(0.001, o), a);
+  float vis = (1.0 - smoothstep(0.88, 1.0, o)) * step(0.001, o);
+  float a = body * mix(0.42, 0.92, ap) * vis;
+  return vec4(c * vis, a);
+}
+
+float twinkle(vec2 p, float t) {
+  float core = exp(-length(p) * 120.0);
+  float star = exp(-abs(p.x) * 58.0) * exp(-abs(p.y) * 300.0)
+             + exp(-abs(p.y) * 58.0) * exp(-abs(p.x) * 300.0);
+  return core + star * 0.85;
+}
+
+float glitters(vec2 uv, float t) {
+  float acc = 0.0;
+  for (int i = 0; i < 3; i++) {
+    float fi = float(i);
+    float scale = 7.0 + fi * 6.0;
+    vec2 g = uv * scale + vec2(fi * 13.0, fi * 7.0);
+    vec2 id = floor(g);
+    vec2 f = fract(g) - 0.5;
+    float r = h21(id + fi * 31.7);
+    if (r > 0.88) {
+      vec2 off = (vec2(h21(id + 1.3), h21(id + 2.7)) - 0.5) * 0.55;
+      float rate = 1.4 + r * 4.0;
+      float tw = sin(t * rate + r * 42.0) * 0.5 + 0.5;
+      acc += twinkle(f - off, 0.0) * tw * (0.35 + 0.65 * r);
+    }
+  }
+  return acc;
 }
 
 void main() {
@@ -177,7 +204,7 @@ void main() {
   float d = fbm(uv * 2.4 - 1.7 * r + t * 0.6);
   float ramp = clamp(f * 0.82 + d * 0.18, 0.0, 1.0);
 
-  vec3 dusk = mix(vec3(0.706, 0.573, 0.714), vec3(0.878, 0.741, 0.831), ramp);
+  vec3 dusk = mix(vec3(0.980, 0.949, 0.965), vec3(0.996, 0.906, 0.945), ramp);
   vec3 open = blendPalettes(act, ramp) * actLightness(act);
 
   vec3 col = mix(dusk, open, mood);
@@ -207,7 +234,11 @@ void main() {
   float vig = smoothstep(2.10, 0.30, length(uv * vec2(0.80, 1.0)));
   col *= mix(mix(0.86, 1.0, vig), mix(0.94, 1.0, vig), mood);
 
-  col += (hash(gl_FragCoord.xy + fract(uTime) * 137.0) - 0.5) * 0.016;
+  col += (hash(gl_FragCoord.xy + fract(uTime) * 137.0) - 0.5) * 0.012;
+
+  float g = glitters(uv, uTime * 1.0);
+  col = mix(col, vec3(0.878, 0.741, 0.478), clamp(g * 0.55, 0.0, 1.0));
+  col += vec3(1.0, 0.98, 0.94) * clamp(g * 0.30, 0.0, 1.0);
 
   float halo;
   vec4 heart = bloomHeart(uv, uOpen, uTime, halo);
