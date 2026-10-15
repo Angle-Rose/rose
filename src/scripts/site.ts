@@ -193,6 +193,52 @@ function initGate() {
   });
 }
 
+function initAntiCopy() {
+  const root = $('[data-guarded]');
+  if (!root) return;
+
+  let timer = 0;
+
+  const flash = () => {
+    root.classList.remove('is-guarded-flash');
+    void root.offsetWidth;
+    root.classList.add('is-guarded-flash');
+    window.clearTimeout(timer);
+    timer = window.setTimeout(() => root.classList.remove('is-guarded-flash'), 1200);
+  };
+
+  root.addEventListener('copy', (e) => {
+    e.preventDefault();
+    flash();
+  });
+
+  root.addEventListener('cut', (e) => {
+    e.preventDefault();
+    flash();
+  });
+
+  root.addEventListener('contextmenu', (e) => e.preventDefault());
+
+  document.addEventListener('selectstart', (e) => {
+    if (root.contains(e.target as Node)) e.preventDefault();
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (!(e.ctrlKey || e.metaKey)) return;
+    const key = e.key.toLowerCase();
+    if (key !== 'c' && key !== 'x' && key !== 'a') return;
+
+    const sel = window.getSelection();
+    const node = sel?.anchorNode;
+    if (!sel || sel.isCollapsed || !node || !root.contains(node)) return;
+
+    e.preventDefault();
+    flash();
+  });
+
+  root.addEventListener('dragstart', (e) => e.preventDefault());
+}
+
 function initReplay() {
   const btn = $<HTMLButtonElement>('[data-replay]');
   if (!btn) return;
@@ -208,6 +254,7 @@ function boot() {
   initReplay();
   initActs();
   initMagnetic();
+  initAntiCopy();
   document.documentElement.classList.add('is-ready');
 }
 

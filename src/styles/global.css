@@ -7,6 +7,7 @@
 	--pink-50: #fff0f7;
 	--pink-100: #ffe0ef;
 	--pink-200: #ffc9e0;
+	--blush: #ffe6f1;
 	--pink-300: #f9aecd;
 	--pink-400: #ef92bd;
 	--pink-500: #e070a8;
@@ -424,19 +425,67 @@ body.is-open .letter {
 	color: var(--text);
 	margin: 0 0 clamp(26px, 4vw, 40px);
 }
+[data-guarded] {
+	-webkit-user-select: none;
+	user-select: none;
+	-webkit-touch-callout: none;
+}
+[data-guarded] a,
+[data-guarded] button {
+	-webkit-user-select: none;
+	user-select: none;
+}
+[data-guarded].is-guarded-flash .cup__text p {
+	animation: guard-glint 1.1s var(--ease-out);
+}
+@keyframes guard-glint {
+	0% { filter: none; }
+	30% { filter: drop-shadow(0 0 22px rgba(224, 189, 124, 0.95)) brightness(1.12); }
+	100% { filter: none; }
+}
 .hl {
 	font-style: normal;
 	font-weight: 600;
-	background: linear-gradient(100deg, var(--pink-600), var(--pink-400) 28%, var(--ink) 50%, var(--pink-400) 72%, var(--pink-600));
-	background-size: 260% 100%;
+	background: linear-gradient(100deg, var(--pink-600) 0%, var(--pink-400) 18%, var(--blush) 34%, var(--gold) 50%, var(--blush) 64%, var(--pink-400) 82%, var(--pink-600) 100%);
+	background-size: 300% 100%;
 	-webkit-background-clip: text;
 	background-clip: text;
 	color: transparent;
-	animation: shimmer 7s linear infinite;
+	-webkit-text-fill-color: transparent;
+	animation: shimmer 5.5s linear infinite;
+	filter: drop-shadow(0 1px 0 rgba(255, 255, 255, 0.9)) drop-shadow(0 0 10px rgba(224, 189, 124, 0.45));
 }
 @keyframes shimmer {
-	0% { background-position: 120% 0; }
-	100% { background-position: -60% 0; }
+	0% { background-position: 130% 0; }
+	100% { background-position: -70% 0; }
+}
+.cup__kicker,
+.letter__closing {
+	background: linear-gradient(100deg, var(--pink-600), var(--blush) 40%, var(--gold) 50%, var(--blush) 60%, var(--pink-600));
+	background-size: 280% 100%;
+	-webkit-background-clip: text;
+	background-clip: text;
+	color: transparent;
+	-webkit-text-fill-color: transparent;
+	animation: shimmer 7s linear infinite;
+}
+.cup__title,
+.together__title {
+	animation: title-glint 5.5s var(--ease-soft) infinite;
+}
+@keyframes title-glint {
+	0%, 100% { text-shadow: 0 4px 26px rgba(224, 189, 124, 0); }
+	45% { text-shadow: 0 4px 30px rgba(224, 189, 124, 0.5), 0 1px 0 rgba(255, 255, 255, 0.9); }
+	70% { text-shadow: 0 4px 22px rgba(249, 174, 205, 0.42); }
+}
+.letter__salutation,
+.letter__name,
+.footer__seal {
+	animation: script-glint 6.5s var(--ease-soft) infinite;
+}
+@keyframes script-glint {
+	0%, 100% { text-shadow: 0 6px 30px rgba(255, 255, 255, 0.95), 0 0 0 rgba(224, 189, 124, 0); }
+	40% { text-shadow: 0 6px 30px rgba(255, 255, 255, 0.95), 0 0 26px rgba(224, 189, 124, 0.65); }
 }
 .whisper {
 	position: relative;
@@ -734,6 +783,13 @@ body.is-open .letter {
 	}
 	.kiss,
 	.hl,
+	.cup__kicker,
+	.letter__closing,
+	.cup__title,
+	.together__title,
+	.letter__salutation,
+	.letter__name,
+	.footer__seal,
 	.seal,
 	.seal__ring,
 	.seal__heart,
@@ -741,6 +797,16 @@ body.is-open .letter {
 	.eyebrow::before,
 	.clock__cell.is-tick .clock__value {
 		animation: none !important;
+	}
+	.cup__title,
+	.together__title,
+	.letter__salutation,
+	.letter__name,
+	.footer__seal {
+		text-shadow: none;
+	}
+	[data-guarded].is-guarded-flash .cup__text p {
+		animation: none;
 	}
 	.kiss {
 		opacity: 1;
