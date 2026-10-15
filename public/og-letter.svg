@@ -1,17 +1,17 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#340519" />
-      <stop offset="0.55" stop-color="#1a0310" />
-      <stop offset="1" stop-color="#0a0208" />
+      <stop offset="0" stop-color="#fffbfd" />
+      <stop offset="0.55" stop-color="#f9e3ec" />
+      <stop offset="1" stop-color="#f3d6e6" />
     </linearGradient>
     <radialGradient id="glowA" cx="0.22" cy="0.18" r="0.62">
-      <stop offset="0" stop-color="#ff5a91" stop-opacity="0.6" />
-      <stop offset="1" stop-color="#ff5a91" stop-opacity="0" />
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.9" />
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0" />
     </radialGradient>
     <linearGradient id="heart" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#ff8cb3" />
-      <stop offset="1" stop-color="#c4143c" />
+      <stop offset="0" stop-color="#c9649c" />
+      <stop offset="1" stop-color="#5a2a5a" />
     </linearGradient>
   </defs>
 
@@ -24,7 +24,7 @@
     text-anchor="middle"
     font-family="Georgia, 'Times New Roman', serif"
     font-size="118"
-    fill="#fff2f6"
+    fill="#3a2347"
   >For Jasper</text>
 
   <text
@@ -34,7 +34,7 @@
     font-family="Georgia, 'Times New Roman', serif"
     font-size="46"
     font-style="italic"
-    fill="#ff3d73"
+    fill="#c9649c"
   >a letter, sealed in pink</text>
 
   <path
@@ -49,15 +49,12 @@
     font-family="Georgia, 'Times New Roman', serif"
     font-size="30"
     font-style="italic"
-    fill="#ffd9e6"
-    opacity="0.82"
+    fill="#5a2a5a"
   >Forever yours, Jenirose</text>
 
   <g font-size="26">
-    <text x="560" y="404">🌹</text>
-    <text x="600" y="404">❤</text>
-    <text x="628" y="404">💋</text>
+    <text x="560" y="556">🌹</text>
+    <text x="600" y="556">❤</text>
+    <text x="628" y="556">💋</text>
   </g>
-
-  <rect x="520" y="552" width="160" height="2" fill="#ffcd8a" opacity="0.7" />
 </svg>

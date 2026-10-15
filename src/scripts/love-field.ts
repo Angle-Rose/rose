@@ -47,68 +47,75 @@ void main() {
   vec2 uv = (gl_FragCoord.xy * 2.0 - uRes) / uRes.y;
 
   float mood = clamp(uMood, 0.0, 1.0);
-  float t = uTime * mix(0.028, 0.055, mood);
+  float t = uTime * mix(0.020, 0.045, mood);
   float sc = uScroll;
 
-  uv += uMouse * mix(0.04, 0.09, mood) * (0.35 + 0.65 * sc);
+  uv += uMouse * mix(0.05, 0.10, mood) * (0.40 + 0.60 * sc);
 
   vec2 q = vec2(
-    fbm(uv * mix(1.55, 1.20, mood) + vec2(0.0, 0.0) + t),
-    fbm(uv * mix(1.55, 1.20, mood) + vec2(5.2, 1.3) - t * 0.70)
+    fbm(uv * 1.10 + vec2(0.0, 0.0) + t),
+    fbm(uv * 1.10 + vec2(5.2, 1.3) - t * 0.75)
   );
 
   vec2 r = vec2(
-    fbm(uv * mix(1.40, 1.10, mood) + 3.0 * q + vec2(1.7, 9.2) + t * 1.10),
-    fbm(uv * mix(1.40, 1.10, mood) + 3.0 * q + vec2(8.3, 2.8) - t * 0.90)
+    fbm(uv * 1.00 + 3.2 * q + vec2(1.7, 9.2) + t * 1.05),
+    fbm(uv * 1.00 + 3.2 * q + vec2(8.3, 2.8) - t * 0.85)
   );
 
-  float f = fbm(uv * mix(1.35, 1.00, mood) + 2.6 * r);
+  float f = fbm(uv + 2.8 * r);
+  float d = fbm(uv * 2.4 - 1.7 * r + t * 0.6);
+  f = f * 0.82 + d * 0.18;
 
-  vec3 deep    = vec3(0.055, 0.008, 0.028);
-  vec3 wine    = vec3(0.290, 0.030, 0.110);
-  vec3 crimson = vec3(0.780, 0.120, 0.290);
-  vec3 rose    = vec3(1.000, 0.350, 0.540);
-  vec3 pink    = vec3(1.000, 0.620, 0.760);
-  vec3 blush   = vec3(1.000, 0.850, 0.900);
-  vec3 gold    = vec3(1.000, 0.820, 0.600);
+  vec3 plum    = vec3(0.353, 0.165, 0.353);
+  vec3 mauve   = vec3(0.753, 0.561, 0.753);
+  vec3 dusky   = vec3(0.918, 0.780, 0.847);
 
-  vec3 col = mix(deep, wine,    smoothstep(0.15, 0.45, f));
-  col      = mix(col,  crimson, smoothstep(0.38, 0.60, f));
-  col      = mix(col,  rose,    smoothstep(0.52, 0.72, f + 0.12 * q.x));
-  col      = mix(col,  pink,    smoothstep(0.66, 0.86, f + 0.18 * r.y));
-  col      = mix(col,  blush,   smoothstep(0.80, 1.05, f + 0.10 * q.y));
+  vec3 sealed = mix(plum, mauve, smoothstep(0.20, 0.55, f));
+  sealed = mix(sealed, dusky, smoothstep(0.55, 0.88, f + 0.12 * r.y));
 
-  float sheen = pow(smoothstep(0.55, 1.0, f), 3.0);
-  col = mix(col, gold, sheen * mix(0.22, 0.40, mood));
+  vec3 pearl = vec3(1.000, 0.980, 0.988);
+  vec3 blush = vec3(0.996, 0.925, 0.945);
+  vec3 rose  = vec3(0.965, 0.800, 0.863);
+  vec3 peony = vec3(0.902, 0.663, 0.780);
+  vec3 lilac = vec3(0.749, 0.663, 0.878);
+  vec3 champ = vec3(0.929, 0.867, 0.682);
 
-  float glow = 0.0;
-  for (int i = 0; i < 5; i++) {
+  vec3 open = mix(pearl, blush, smoothstep(0.08, 0.38, f));
+  open = mix(open, rose,   smoothstep(0.32, 0.55, f + 0.10 * q.x));
+  open = mix(open, peony,  smoothstep(0.46, 0.67, f + 0.16 * r.y));
+  open = mix(open, lilac,  smoothstep(0.62, 0.84, f + 0.10 * q.y));
+  open = mix(open, champ,  pow(smoothstep(0.70, 1.0, f), 4.0) * 0.55);
+
+  vec3 col = mix(sealed, open, mood);
+
+  float bloom = 0.0;
+  for (int i = 0; i < 4; i++) {
     float fi = float(i);
     vec2 pos = vec2(
-      sin(uTime * 0.12 + fi * 2.3 + fi * fi),
-      cos(uTime * 0.09 + fi * 1.7)
-    ) * vec2(1.15, 0.78);
-    pos += vec2(uMouse.x * 0.12, uMouse.y * 0.10);
-    pos.y += 0.10 * sin(uTime * 0.20 + fi);
-    float d = length(uv - pos);
-    glow += mix(0.010, 0.018, mood) / (d * d + 0.012);
+      sin(uTime * 0.10 + fi * 2.1 + fi * fi),
+      cos(uTime * 0.08 + fi * 1.6)
+    ) * vec2(1.10, 0.72);
+    pos += vec2(uMouse.x * 0.10, uMouse.y * 0.08);
+    float dist = length(uv - pos);
+    bloom += 0.020 / (dist * dist + 0.020);
   }
-  col += glow * vec3(1.0, 0.48, 0.66) * mix(0.30, 0.60, mood);
+  col += bloom * mix(vec3(0.62, 0.42, 0.62), vec3(0.10, 0.04, 0.12), mood) * mix(0.45, 0.22, mood);
 
-  float ml = 1.0 - smoothstep(0.0, 0.85, length(uv - uMouse * 0.55));
-  col += ml * ml * vec3(0.26, 0.06, 0.13) * (0.35 + 0.65 * sc);
+  float sweep = sin((uv.x * 0.55 + uv.y * 0.30) * 1.15 - uTime * 0.13) * 0.5 + 0.5;
+  col += pow(sweep, 7.0) * 0.075 * mix(vec3(0.85, 0.70, 0.85), vec3(1.0, 0.96, 0.90), mood);
 
   float beat = pow(max(0.0, sin(uTime * 1.55)), 7.0) * (1.0 - mood);
-  col += beat * 0.075 * vec3(1.0, 0.30, 0.52);
+  col += beat * 0.055 * vec3(0.78, 0.58, 0.80);
 
-  float vig = smoothstep(1.85, 0.30, length(uv * vec2(0.78, 1.0)));
-  col *= mix(0.42, 1.0, vig) * mix(0.62, 1.05, mood);
+  float ml = 1.0 - smoothstep(0.0, 0.85, length(uv - uMouse * 0.55));
+  col += ml * ml * mix(vec3(0.18, 0.08, 0.20), vec3(0.05, 0.02, 0.07), mood);
 
-  col += smoothstep(0.90, -0.20, uv.y) * vec3(0.14, 0.03, 0.08) * (0.4 + 0.6 * mood);
+  float vig = smoothstep(2.10, 0.30, length(uv * vec2(0.80, 1.0)));
+  col *= mix(mix(0.70, 1.0, vig), mix(0.90, 1.0, vig), mood);
 
-  col += (hash(gl_FragCoord.xy + fract(uTime) * 137.0) - 0.5) * 0.035;
+  col += (hash(gl_FragCoord.xy + fract(uTime) * 137.0) - 0.5) * mix(0.022, 0.012, mood);
 
-  gl_FragColor = vec4(pow(max(col, 0.0), vec3(0.92)), 1.0);
+  gl_FragColor = vec4(clamp(col, 0.0, 1.0), 1.0);
 }
 `;
 
@@ -208,6 +215,7 @@ export function initLoveField(canvas: HTMLCanvasElement): LoveFieldController {
   let raf = 0;
   let running = true;
   let visible = !document.hidden;
+  let lost = false;
 
   let moodTarget = 0;
   let mood = 0;
@@ -216,6 +224,20 @@ export function initLoveField(canvas: HTMLCanvasElement): LoveFieldController {
   const smooth = { x: 0, y: 0 };
   let scrollTarget = 0;
   let scrollSmooth = 0;
+
+  const onLost = (e: Event) => {
+    e.preventDefault();
+    lost = true;
+    cancelAnimationFrame(raf);
+    canvas.dataset.webgl = 'off';
+  };
+
+  const onRestored = () => {
+    window.location.reload();
+  };
+
+  canvas.addEventListener('webglcontextlost', onLost, false);
+  canvas.addEventListener('webglcontextrestored', onRestored, false);
 
   const resize = () => {
     w = window.innerWidth;
@@ -248,10 +270,11 @@ export function initLoveField(canvas: HTMLCanvasElement): LoveFieldController {
 
   let slowFrames = 0;
   let downgraded = false;
+  let stalled = 0;
   let last = performance.now();
 
   const frame = (now: number) => {
-    if (!running || !visible) return;
+    if (!running || !visible || lost) return;
 
     const dt = now - last;
     last = now;
@@ -266,6 +289,14 @@ export function initLoveField(canvas: HTMLCanvasElement): LoveFieldController {
       }
     } else {
       slowFrames = 0;
+    }
+
+    if (downgraded && dt > 200) {
+      if (++stalled > 10) {
+        canvas.dataset.webgl = 'off';
+        running = false;
+        return;
+      }
     }
 
     const k = reduced ? 1 : 1 - Math.pow(0.0015, dt / 1000);
@@ -298,6 +329,12 @@ export function initLoveField(canvas: HTMLCanvasElement): LoveFieldController {
   gl.uniform1f(u.uMood, 0);
   gl.drawArrays(gl.TRIANGLES, 0, 3);
 
+  if (gl.getError() === gl.NO_ERROR && !gl.isContextLost()) {
+    canvas.dataset.ready = 'true';
+  } else {
+    canvas.dataset.webgl = 'off';
+  }
+
   if (!reduced) raf = requestAnimationFrame(frame);
 
   return {
@@ -311,6 +348,8 @@ export function initLoveField(canvas: HTMLCanvasElement): LoveFieldController {
       window.removeEventListener('pointermove', onPointer);
       window.removeEventListener('scroll', onScroll);
       document.removeEventListener('visibilitychange', onVisibility);
+      canvas.removeEventListener('webglcontextlost', onLost);
+      canvas.removeEventListener('webglcontextrestored', onRestored);
       gl.deleteProgram(prog);
       gl.deleteBuffer(buf);
     },

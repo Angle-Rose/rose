@@ -18,7 +18,7 @@ export const LETTER = {
 
 		'I see how hard you work every day, and I want you to know how deeply I believe in you. I know you are going to be so successful and achieve every single goal you set your mind to. I’ll always be right here in your corner, cheering you on through every win and supporting you every step of the way.',
 
-		'And hey, once you make it big and build that bright future... remember that someone has to fulfill the duty of being your [[spoiled princess! 😜]] I am more than ready to take on the very tough responsibility of spending all your money! Hahaha!',
+		'And hey, once you make it big and build that bright future... remember that someone has to fulfill the duty of being your [[spoiled princess!]] I am more than ready to take on the very tough responsibility of spending all your money! Hahaha!',
 
 		'All jokes aside, thank you for loving me, for fighting for us, and for being the incredible partner you are. [[I love you more than words can say, Jasper.]]',
 	],
