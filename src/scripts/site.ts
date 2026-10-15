@@ -1,10 +1,3 @@
-
-
-
-
-
-
-
 const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const FINE = window.matchMedia('(pointer: fine)').matches;
 
@@ -13,15 +6,11 @@ const $ = <T extends Element = HTMLElement>(sel: string, root: Element | Documen
 const $$ = <T extends Element = HTMLElement>(sel: string, root: Element | Document = document) =>
   Array.from(root.querySelectorAll<T>(sel));
 
-
-
-
-
 function initScrollProgress() {
   const bar = $('[data-progress]');
   if (!bar) return;
-
   let ticking = false;
+
   const update = () => {
     ticking = false;
     const max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
@@ -41,12 +30,8 @@ function initScrollProgress() {
   update();
 }
 
-
-
-
-
-function initReveal() {
-  const items = $$('[data-reveal]');
+function observeReveal(root: Element | Document = document) {
+  const items = $$('[data-reveal]', root).filter((el) => !el.classList.contains('is-visible'));
   if (!items.length) return;
 
   if (REDUCED) {
@@ -63,20 +48,11 @@ function initReveal() {
         io.unobserve(el);
       }
     },
-    { rootMargin: '0px 0px -12% 0px', threshold: 0.08 }
+    { rootMargin: '0px 0px -10% 0px', threshold: 0.12 }
   );
 
   items.forEach((el) => io.observe(el));
 }
-
-
-
-
-
-
-
-
-
 
 function splitWords(el: HTMLElement) {
   const build = (nodes: ChildNode[], out: HTMLElement): HTMLElement[] => {
@@ -112,7 +88,6 @@ function splitWords(el: HTMLElement) {
   const original = Array.from(el.childNodes);
   el.textContent = '';
 
-  
   build(original, el).forEach((mask, i) => {
     const inner = mask.firstElementChild as HTMLElement;
     inner.style.setProperty('--d', `${Math.min(i * 70, 760)}ms`);
@@ -123,12 +98,11 @@ function initSplitHeadlines() {
   const heads = $$('[data-split]');
   if (!heads.length) return;
 
-  heads.forEach((el) => {
-    splitWords(el);
-    el.classList.add('is-split');
-  });
-
-  if (REDUCED) return;
+  heads.forEach((el) => splitWords(el));
+  if (REDUCED) {
+    heads.forEach((el) => el.classList.add('is-visible'));
+    return;
+  }
 
   const io = new IntersectionObserver(
     (entries) => {
@@ -138,15 +112,11 @@ function initSplitHeadlines() {
         io.unobserve(entry.target);
       }
     },
-    { threshold: 0.25 }
+    { threshold: 0.2 }
   );
 
   heads.forEach((el) => io.observe(el));
 }
-
-
-
-
 
 function initCounters() {
   const nums = $$('[data-count]');
@@ -161,8 +131,8 @@ function initCounters() {
 
         const to = parseFloat(el.dataset.count || '0');
         const suffix = el.dataset.suffix || '';
-        const pad = (el.dataset.pad === 'true');
-        const dur = REDUCED ? 0 : 1600;
+        const pad = el.dataset.pad === 'true';
+        const dur = REDUCED ? 0 : 1800;
 
         if (dur === 0) {
           el.textContent = (pad ? to.toFixed(2) : String(Math.round(to))) + suffix;
@@ -172,7 +142,6 @@ function initCounters() {
         const t0 = performance.now();
         const tick = (now: number) => {
           const p = Math.min(1, (now - t0) / dur);
-          
           const e = p === 1 ? 1 : 1 - Math.pow(2, -10 * p);
           const v = to * e;
           el.textContent = (pad ? v.toFixed(2) : String(Math.round(v))) + suffix;
@@ -181,56 +150,85 @@ function initCounters() {
         requestAnimationFrame(tick);
       }
     },
-    { threshold: 0.2 }
+    { threshold: 0.25 }
   );
 
   nums.forEach((el) => io.observe(el));
 }
 
+function initTogether() {
+  const root = $('[data-together]');
+  if (!root) return;
 
+  const since = root.dataset.since;
+  if (!since) return;
 
+  const start = new Date(`${since}T00:00:00`).getTime();
+  if (Number.isNaN(start)) return;
 
+  const cells = $$('[data-unit]', root);
+  const fmt = (n: number) => String(Math.max(0, n)).padStart(2, '0');
+  let lastSecond = -1;
+
+  const tick = () => {
+    const diff = Date.now() - start;
+    if (diff < 0) return;
+
+    const values = [
+      Math.floor(diff / 86400000),
+      Math.floor(diff / 3600000) % 24,
+      Math.floor(diff / 60000) % 60,
+      Math.floor(diff / 1000) % 60,
+    ];
+
+    if (values[3] !== lastSecond) {
+      lastSecond = values[3];
+      cells.forEach((cell, i) => {
+        const v = i === 0 ? String(values[i]) : fmt(values[i]);
+        if (cell.firstElementChild?.textContent !== v) {
+          (cell.firstElementChild as HTMLElement).textContent = v;
+          cell.classList.remove('is-tick');
+          void cell.offsetWidth;
+          cell.classList.add('is-tick');
+        }
+      });
+    }
+  };
+
+  tick();
+  window.setInterval(tick, 1000);
+}
 
 function initMagnetic() {
   if (!FINE || REDUCED) return;
 
   $$('[data-magnetic]').forEach((el) => {
-    const strength = parseFloat(el.dataset.magnetic || '0.32');
+    const strength = parseFloat(el.dataset.magnetic || '0.3');
 
     el.addEventListener('pointermove', (e) => {
       const r = el.getBoundingClientRect();
       const dx = (e.clientX - (r.left + r.width / 2)) * strength;
       const dy = (e.clientY - (r.top + r.height / 2)) * strength;
       el.style.transform = `translate3d(${dx}px, ${dy}px, 0)`;
-      const inner = el.firstElementChild as HTMLElement | null;
-      if (inner) inner.style.transform = `translate3d(${dx * -0.28}px, ${dy * -0.28}px, 0)`;
     });
 
     el.addEventListener('pointerleave', () => {
       el.style.transform = '';
-      const inner = el.firstElementChild as HTMLElement | null;
-      if (inner) inner.style.transform = '';
     });
   });
 }
-
-
-
-
 
 function initTilt() {
   if (!FINE || REDUCED) return;
 
   $$('[data-tilt]').forEach((el) => {
-    const max = parseFloat(el.dataset.tilt || '9');
+    const max = parseFloat(el.dataset.tilt || '7');
 
     el.addEventListener('pointermove', (e) => {
       const r = el.getBoundingClientRect();
       const px = (e.clientX - r.left) / r.width - 0.5;
       const py = (e.clientY - r.top) / r.height - 0.5;
-      el.style.transform = `perspective(900px) rotateX(${-py * max}deg) rotateY(${px * max}deg) translateY(-6px)`;
-      el.style.setProperty('--mx', `${(px + 0.5) * 100}%`);
-      el.style.setProperty('--my', `${(py + 0.5) * 100}%`);
+      el.style.transform = `perspective(900px) rotateX(${-py * max}deg) rotateY(${px * max}deg)`;
     });
 
     el.addEventListener('pointerleave', () => {
@@ -238,10 +236,6 @@ function initTilt() {
     });
   });
 }
-
-
-
-
 
 function initParallax() {
   if (REDUCED) return;
@@ -259,7 +253,6 @@ function initParallax() {
       const speed = parseFloat(el.dataset.parallax || '0.15');
       const r = el.getBoundingClientRect();
       if (r.bottom < -200 || r.top > vh + 200) continue;
-      
       const p = (r.top + r.height / 2 - vh / 2) / vh;
       el.style.setProperty('--py-shift', `${(-p * speed * 100).toFixed(2)}px`);
     }
@@ -277,45 +270,41 @@ function initParallax() {
   update();
 }
 
+function initPetals() {
+  if (REDUCED) return;
 
+  const layer = $('[data-petals]');
+  if (!layer) return;
 
+  const glyphs = ['❤', '✿', '❥', '♡', '❀'];
+  const count = window.innerWidth < 720 ? 14 : 24;
 
-
-function initHeroParallax() {
-  const hero = $('[data-hero]');
-  if (!hero || !FINE || REDUCED) return;
-
-  const layers = $$('[data-depth]', hero);
-
-  hero.addEventListener('pointermove', (e) => {
-    const r = hero.getBoundingClientRect();
-    const px = (e.clientX - r.left) / r.width - 0.5;
-    const py = (e.clientY - r.top) / r.height - 0.5;
-    for (const el of layers) {
-      const d = parseFloat(el.dataset.depth || '0.1');
-      el.style.transform = `translate3d(${(px * d * -120).toFixed(2)}px, ${(py * d * -120).toFixed(2)}px, 0)`;
-    }
-  });
-
-  hero.addEventListener('pointerleave', () => {
-    for (const el of layers) el.style.transform = '';
-  });
+  for (let i = 0; i < count; i++) {
+    const p = document.createElement('span');
+    p.className = 'petal';
+    p.textContent = glyphs[(Math.random() * glyphs.length) | 0];
+    p.style.left = `${Math.random() * 100}%`;
+    p.style.fontSize = `${(9 + Math.random() * 15).toFixed(1)}px`;
+    p.style.setProperty('--fall', `${(16 + Math.random() * 18).toFixed(1)}s`);
+    p.style.setProperty('--delay', `${(-Math.random() * 24).toFixed(1)}s`);
+    p.style.setProperty('--drift', `${(Math.random() * 90 - 45).toFixed(0)}px`);
+    p.style.setProperty('--sway', `${(5 + Math.random() * 7).toFixed(1)}s`);
+    p.style.opacity = (0.16 + Math.random() * 0.34).toFixed(2);
+    layer.appendChild(p);
+  }
 }
-
-
-
-
 
 function initHeartTrail() {
   if (!FINE || REDUCED) return;
   if (window.matchMedia('(hover: none)').matches) return;
+  if (!document.body.classList.contains('is-open')) return;
 
   const layer = document.createElement('div');
   layer.className = 'heart-trail';
   layer.setAttribute('aria-hidden', 'true');
   document.body.appendChild(layer);
 
-  const HEARTS = ['♥', '❤', '✿', '❥'];
+  const glyphs = ['❤', '♡', '✿', '❥'];
   const pool: HTMLElement[] = [];
   let last = 0;
 
@@ -323,7 +312,7 @@ function initHeartTrail() {
     'pointermove',
     (e) => {
       const now = performance.now();
-      if (now - last < 48) return;
+      if (now - last < 52) return;
       last = now;
 
       let el = pool.pop();
@@ -332,13 +321,11 @@ function initHeartTrail() {
         layer.appendChild(el);
       }
       el.className = 'heart';
-      el.textContent = HEARTS[(Math.random() * HEARTS.length) | 0];
+      el.textContent = glyphs[(Math.random() * glyphs.length) | 0];
       el.style.left = `${e.clientX}px`;
       el.style.top = `${e.clientY}px`;
       el.style.setProperty('--drift', `${(Math.random() * 60 - 30).toFixed(0)}px`);
       el.style.setProperty('--spin', `${(Math.random() * 80 - 40).toFixed(0)}deg`);
-
-      
       el.style.animation = 'none';
       void el.offsetWidth;
       el.style.animation = '';
@@ -352,186 +339,58 @@ function initHeartTrail() {
   );
 }
 
+function initGate() {
+  const seal = $<HTMLButtonElement>('[data-open]');
+  const gate = $('[data-gate]');
+  if (!seal || !gate) return;
 
+  const reveal = () => {
+    if (document.body.classList.contains('is-opening')) return;
+    document.body.classList.add('is-opening');
 
+    window.dispatchEvent(new CustomEvent('letter:mood', { detail: 1 }));
+    gate.setAttribute('aria-hidden', 'true');
 
-
-function initNav() {
-  const nav = $('[data-nav]');
-  const toggle = $<HTMLButtonElement>('[data-nav-toggle]');
-  const links = $$<HTMLAnchorElement>('[data-nav] a[href^="#"]');
-
-  if (nav) {
-    const onScroll = () => nav.classList.toggle('is-scrolled', window.scrollY > 40);
-    window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
-  }
-
-  if (toggle && nav) {
-    toggle.addEventListener('click', () => {
-      const open = nav.classList.toggle('is-open');
-      toggle.setAttribute('aria-expanded', String(open));
-    });
-
-    nav.addEventListener('click', (e) => {
-      if ((e.target as HTMLElement).closest('a')) {
-        nav.classList.remove('is-open');
-        toggle?.setAttribute('aria-expanded', 'false');
-      }
-    });
-  }
-
-  if (!links.length) return;
-
-  const sections = links
-    .map((a) => document.getElementById(a.getAttribute('href')!.slice(1)))
-    .filter((s): s is HTMLElement => Boolean(s));
-
-  if (!sections.length) return;
-
-  const io = new IntersectionObserver(
-    (entries) => {
-      for (const entry of entries) {
-        if (!entry.isIntersecting) continue;
-        const id = entry.target.id;
-        for (const a of links) {
-          a.classList.toggle('is-active', a.getAttribute('href') === `#${id}`);
-        }
-      }
-    },
-    { rootMargin: '-45% 0px -50% 0px' }
-  );
-
-  sections.forEach((s) => io.observe(s));
-
-  
-  for (const a of links) {
-    a.addEventListener('click', (e) => {
-      const target = document.getElementById(a.getAttribute('href')!.slice(1));
-      if (!target) return;
-      e.preventDefault();
-      const top = target.getBoundingClientRect().top + window.scrollY - 74;
-      window.scrollTo({ top, behavior: REDUCED ? 'auto' : 'smooth' });
-      history.replaceState(null, '', a.getAttribute('href')!);
-    });
-  }
-}
-
-
-
-
-
-function initFaq() {
-  $$('[data-faq-item]').forEach((item) => {
-    const btn = $<HTMLButtonElement>('[data-faq-btn]', item);
-    const panel = $<HTMLElement>('[data-faq-panel]', item);
-    if (!btn || !panel) return;
-
-    btn.addEventListener('click', () => {
-      const open = item.classList.contains('is-open');
-
-      
-      $$('[data-faq-item]').forEach((other) => {
-        other.classList.remove('is-open');
-        const b = $<HTMLButtonElement>('[data-faq-btn]', other);
-        b?.setAttribute('aria-expanded', 'false');
-      });
-
-      if (!open) {
-        item.classList.add('is-open');
-        btn.setAttribute('aria-expanded', 'true');
-      }
-    });
-  });
-}
-
-
-
-
-
-function initForm() {
-  const form = $<HTMLFormElement>('[data-form]');
-  if (!form) return;
-
-  const status = $('[data-form-status]', form);
-  const submit = $<HTMLButtonElement>('[type="submit"]', form);
-
-  form.addEventListener('input', (e) => {
-    const t = e.target as HTMLInputElement | HTMLTextAreaElement;
-    if (t.validity.valid) t.closest('.field')?.classList.remove('has-error');
-  });
-
-  form.addEventListener('submit', (e) => {
-    e.preventDefault();
-
-    let valid = true;
-    $$('.field', form).forEach((f) => {
-      const input = $('input, textarea', f);
-      if (!input) return;
-      const bad = !(input as HTMLInputElement).validity.valid;
-      f.classList.toggle('has-error', bad);
-      if (bad && valid) (input as HTMLInputElement).focus();
-      valid = valid && !bad;
-    });
-
-    if (!valid) {
-      if (status) status.textContent = 'Please check the highlighted fields.';
-      return;
-    }
-
-    if (submit) {
-      submit.disabled = true;
-      submit.dataset.label = submit.textContent || '';
-      submit.textContent = 'Sending…';
-    }
-    if (status) status.textContent = 'Sending your enquiry…';
-
-    
-    
     window.setTimeout(() => {
-      form.reset();
-      if (submit) {
-        submit.disabled = false;
-        submit.textContent = submit.dataset.label || 'Send enquiry';
-      }
-      if (status) status.textContent = 'Thank you. We read every word — expect a reply within 48 hours.';
-      form.classList.add('is-sent');
-      window.setTimeout(() => form.classList.remove('is-sent'), 4000);
-    }, 1100);
+      document.body.classList.remove('is-opening');
+      document.body.classList.add('is-open');
+      gate.remove();
+      document.documentElement.classList.add('is-ready');
+      initScrollProgress();
+      observeReveal();
+      initTogether();
+      initHeartTrail();
+      window.scrollTo({ top: 0, behavior: 'auto' });
+    }, REDUCED ? 0 : 1050);
+  };
+
+  seal.addEventListener('click', reveal);
+  gate.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      reveal();
+    }
   });
 }
 
+function initReplay() {
+  const btn = $<HTMLButtonElement>('[data-replay]');
+  if (!btn) return;
 
-
-
-
-function initMarquees() {
-  $$('[data-marquee]').forEach((m) => {
-    const inner = m.firstElementChild as HTMLElement | null;
-    if (!inner || inner.dataset.cloned) return;
-    const clone = inner.cloneNode(true) as HTMLElement;
-    clone.dataset.cloned = 'true';
-    clone.setAttribute('aria-hidden', 'true');
-    m.appendChild(clone);
+  btn.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: REDUCED ? 'auto' : 'smooth' });
   });
 }
-
-
 
 function boot() {
-  initScrollProgress();
-  initReveal();
+  initPetals();
   initSplitHeadlines();
   initCounters();
-  initMarquees();
-  initFaq();
-  initForm();
-  initNav();
+  initGate();
+  initReplay();
   initMagnetic();
   initTilt();
   initParallax();
-  initHeroParallax();
-  initHeartTrail();
   document.documentElement.classList.add('is-ready');
 }
 
