@@ -1,7 +1,6 @@
 ---
 import BaseHead from '../components/BaseHead.astro';
-import Header from '../components/Header.astro';
-import Footer from '../components/Footer.astro';
+import LoveField from '../components/LoveField.astro';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 ---
 
@@ -9,42 +8,620 @@ import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 <html lang="en">
 	<head>
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+		<script is:inline>
+			document.documentElement.classList.add('js');
+		</script>
 	</head>
+
 	<body>
-		<Header />
-		<main>
-			<h1>🧑‍🚀 Hello, Astronaut!</h1>
-			<p>
-				Welcome to the official <a href="https://astro.build/">Astro</a> blog starter template. This
-				template serves as a lightweight, minimally-styled starting point for anyone looking to build
-				a personal website, blog, or portfolio with Astro.
-			</p>
-			<p>
-				This template comes with a few integrations already configured in your
-				<code>astro.config.mjs</code> file. You can customize your setup with
-				<a href="https://astro.build/integrations">Astro Integrations</a> to add tools like Tailwind,
-				React, or Vue to your project.
-			</p>
-			<p>Here are a few ideas on how to get started with the template:</p>
-			<ul>
-				<li>Edit this page in <code>src/pages/index.astro</code></li>
-				<li>Edit the site header items in <code>src/components/Header.astro</code></li>
-				<li>Add your name to the footer in <code>src/components/Footer.astro</code></li>
-				<li>Check out the included blog posts in <code>src/content/blog/</code></li>
-				<li>Customize the blog post page layout in <code>src/layouts/BlogPost.astro</code></li>
-			</ul>
-			<p>
-				Have fun! If you get stuck, remember to <a href="https://docs.astro.build/"
-					>read the docs
-				</a> or <a href="https://astro.build/chat">join us on Discord</a> to ask questions.
-			</p>
-			<p>
-				Looking for a blog template with a bit more personality? Check out <a
-					href="https://github.com/Charca/astro-blog-template"
-					>astro-blog-template
-				</a> by <a href="https://twitter.com/Charca">Maxi Ferreira</a>.
-			</p>
+		<a class="skip-link" href="#main">Skip to content</a>
+
+		<LoveField />
+
+		<div class="progress" data-progress aria-hidden="true"></div>
+
+		
+		<header class="nav" data-nav>
+			<div class="shell nav__inner">
+				<a class="brand" href="#top">
+					<span class="brand__mark" aria-hidden="true">❥</span>
+					<span>Rose</span>
+				</a>
+
+				<button
+					class="nav__toggle"
+					type="button"
+					data-nav-toggle
+					aria-expanded="false"
+					aria-label="Toggle navigation"
+				>
+					<span></span>
+				</button>
+
+				<nav class="nav__links" aria-label="Main">
+					<a href="#story">Story</a>
+					<a href="#services">Services</a>
+					<a href="#process">Process</a>
+					<a href="#voices">Voices</a>
+					<a href="#pricing">Pricing</a>
+					<a class="btn btn--solid nav__cta" href="#contact" data-magnetic="0.25">
+						<span>Enquire</span>
+					</a>
+				</nav>
+			</div>
+		</header>
+
+		<main id="main">
+			
+			<section class="hero" id="top" data-hero>
+				<div class="shell hero__inner">
+					<p class="eyebrow" data-depth="0.06">Est. 2026 · Matchmaking Atelier</p>
+
+					<h1 class="display hero__title" data-split data-depth="0.12">
+						Love, <em class="accent">by design.</em>
+					</h1>
+
+					<p class="hero__sub" data-depth="0.09" data-reveal>
+						A private atelier for people who refuse to settle. We read the room your way,
+						engineer the chemistry, and introduce you to the one person who was going to work
+						anyway.
+					</p>
+
+					<div class="hero__actions" data-reveal style="--d: 120ms">
+						<a class="btn btn--solid" href="#contact" data-magnetic>
+							<span>Begin your search <span aria-hidden="true">→</span></span>
+						</a>
+						<a class="btn btn--ghost" href="#process" data-magnetic>
+							<span>How it works</span>
+						</a>
+					</div>
+
+					<div class="hero__meta" data-reveal style="--d: 240ms">
+						<div>
+							<strong><span data-count="1840" data-suffix="+">0</span></strong>
+							<span>Introductions</span>
+						</div>
+						<div>
+							<strong><span data-count="71" data-suffix="%">0</span></strong>
+							<span>Married or partnered</span>
+						</div>
+						<div>
+							<strong><span data-count="4.9" data-pad="true">0</span></strong>
+							<span>Avg. rating</span>
+						</div>
+						<div>
+							<strong><span data-count="100" data-suffix="%">0</span></strong>
+							<span>Discretion</span>
+						</div>
+					</div>
+				</div>
+
+				<div class="scroll-cue" aria-hidden="true">
+					Scroll
+					<i></i>
+				</div>
+			</section>
+
+			
+			<div class="marquee" data-marquee aria-hidden="true">
+				<div class="marquee__track">
+					<span>Wild Chemistry</span>
+					<span>Matched by Hand</span>
+					<span>Nothing Generic</span>
+					<span>Real Introductions</span>
+					<span>Obsessive Detail</span>
+					<span>Say Yes Properly</span>
+				</div>
+			</div>
+
+			
+			<section class="section has-ghost" id="story">
+				<span class="ghost" aria-hidden="true" data-parallax="0.28">ROSE</span>
+
+				<div class="shell split">
+					<div data-reveal="left">
+						<p class="eyebrow">Our story</p>
+						<h2 class="display">
+							Dating apps were never built for <em class="accent">the real thing.</em>
+						</h2>
+					</div>
+
+					<div class="story__body" data-reveal="right" style="--d: 120ms">
+						<p>
+							We started ROSE after one too many evenings spent scrolling past people who
+							looked right on paper and felt like nothing at all.
+						</p>
+						<p>
+							So we built the opposite. No swipes. No infinite scroll. Every client is read
+							properly — interviews, instincts, the things you wouldn't put on a profile —
+							and every introduction is hand-made by a human who has met both of you.
+						</p>
+						<p>
+							It is slower, and it is deliberately so. The best things in this world are.
+						</p>
+						<p class="signature">— Ines &amp; Tomas</p>
+					</div>
+				</div>
+
+				<div class="shell" style="margin-top: clamp(50px, 7vw, 90px)">
+					<div class="split split--flip" style="align-items: center">
+						<div class="orb" data-reveal="scale" aria-hidden="true">
+							<div class="orb__core">❥</div>
+						</div>
+
+						<div data-reveal="right" style="--d: 140ms">
+							<p class="eyebrow">How we think</p>
+							<h2 class="display" style="font-size: clamp(1.9rem, 4.4vw, 3.1rem)">
+								Chemistry first. Always.
+							</h2>
+							<p class="lede" style="margin-top: 18px">
+								We optimise for the thing you'll actually feel on a second date — not the
+								number of matches, not the size of the funnel. One right introduction
+								beats a thousand polite hellos, and we only ever send the former.
+							</p>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			
+			<section class="section" id="services">
+				<div class="shell">
+					<div class="section__head section__head--center" data-reveal>
+						<p class="eyebrow">What we do</p>
+						<h2 class="display">Four ways we find your person</h2>
+						<p class="lede">
+							Pick the one that fits where you are. Every engagement is private, unhurried,
+							and built around you.
+						</p>
+					</div>
+
+					<div class="grid-3">
+						<article class="card" data-tilt data-reveal style="--d: 0ms">
+							<span class="card__icon" aria-hidden="true">✦</span>
+							<span class="card__num">01</span>
+							<h3>The Introduction</h3>
+							<p>
+								Our signature service. A deep read on you, a considered matching, and a
+								hand-delivered introduction to someone we'd genuinely vouch for.
+							</p>
+							<ul class="card__tags">
+								<li>3 months</li>
+								<li>Curated</li>
+								<li>6 intros</li>
+							</ul>
+						</article>
+
+						<article class="card" data-tilt data-reveal style="--d: 110ms">
+							<span class="card__icon" aria-hidden="true">❥</span>
+							<span class="card__num">02</span>
+							<h3>The Deep Dive</h3>
+							<p>
+								For the person who wants the whole picture. Personality mapping, values work,
+								and a full strategy session before a single introduction goes out.
+							</p>
+							<ul class="card__tags">
+								<li>Full audit</li>
+								<li>90 min</li>
+								<li>Profile</li>
+							</ul>
+						</article>
+
+						<article class="card" data-tilt data-reveal style="--d: 220ms">
+							<span class="card__icon" aria-hidden="true">♡</span>
+							<span class="card__num">03</span>
+							<h3>The Concierge</h3>
+							<p>
+								You bring the date. We make it unforgettable. Venues, timing, the small things
+								that turn a dinner into a story you'll tell for years.
+							</p>
+							<ul class="card__tags">
+								<li>Per date</li>
+								<li>Global</li>
+								<li>48h notice</li>
+							</ul>
+						</article>
+
+						<article class="card" data-tilt data-reveal style="--d: 330ms">
+							<span class="card__icon" aria-hidden="true">✧</span>
+							<span class="card__num">04</span>
+							<h3>For Two</h3>
+							<p>
+								Already found each other? Our couples programme sharpens the bond — date
+								nights, guided conversation, and a relationship that keeps getting better.
+							</p>
+							<ul class="card__tags">
+								<li>Ongoing</li>
+								<li>Monthly</li>
+								<li>Private</li>
+							</ul>
+						</article>
+					</div>
+				</div>
+			</section>
+
+			
+			<section class="section" id="process">
+				<div class="shell">
+					<div class="section__head" data-reveal>
+						<p class="eyebrow">The process</p>
+						<h2 class="display">Four steps. No mystery.</h2>
+					</div>
+
+					<div class="steps">
+						<article class="step" data-reveal>
+							<div class="step__dot">1</div>
+							<h3>We listen</h3>
+							<p>
+								A long conversation about what you've actually wanted, what you've actually
+								settled for, and where those two went wrong.
+							</p>
+							<span class="step__meta">Week one</span>
+						</article>
+
+						<article class="step" data-reveal style="--d: 110ms">
+							<div class="step__dot">2</div>
+							<h3>We map</h3>
+							<p>
+								Values, attachment style, love languages, dealbreakers. A picture of you
+								that a swipe app never bothered to take.
+							</p>
+							<span class="step__meta">Week two</span>
+						</article>
+
+						<article class="step" data-reveal style="--d: 220ms">
+							<div class="step__dot">3</div>
+							<h3>We introduce</h3>
+							<p>
+								Both sides are briefed, both sides consent, and the introduction lands
+								properly — warm, contextual, never awkward.
+							</p>
+							<span class="step__meta">Week four</span>
+						</article>
+
+						<article class="step" data-reveal style="--d: 330ms">
+							<div class="step__dot">4</div>
+							<h3>We follow through</h3>
+							<p>
+								After the date we get the honest version, learn from it, and sharpen the
+								next introduction. That loop is the whole product.
+							</p>
+							<span class="step__meta">Ongoing</span>
+						</article>
+					</div>
+				</div>
+			</section>
+
+			
+			<section class="section" id="voices">
+				<div class="shell">
+					<div class="section__head section__head--center" data-reveal>
+						<p class="eyebrow">Voices</p>
+						<h2 class="display">People we got it right for</h2>
+					</div>
+
+					<div class="quotes">
+						<blockquote class="quote" data-reveal>
+							<p>
+								I had given up on apps entirely. ROSE sent me one introduction and I married
+								her. That's the whole review.
+							</p>
+							<footer>
+								<span class="quote__ava" aria-hidden="true">M</span>
+								<cite>Marcus D. <span>London</span></cite>
+							</footer>
+						</blockquote>
+
+						<blockquote class="quote" data-reveal style="--d: 120ms">
+							<p>
+								The Deep Dive was uncomfortable, accurate, and completely worth it. Nobody had
+								ever put my behaviour that neatly into words before.
+							</p>
+							<footer>
+								<span class="quote__ava" aria-hidden="true">A</span>
+								<cite>Ama K. <span>Accra</span></cite>
+							</footer>
+						</blockquote>
+
+						<blockquote class="quote" data-reveal style="--d: 240ms">
+							<p>
+								They talked us into a rooftop I'd never have found. Two years in, we still talk
+								about that first evening.
+							</p>
+							<footer>
+								<span class="quote__ava" aria-hidden="true">S &amp; J</span>
+								<cite>Sofia &amp; Jonas <span>Lisbon</span></cite>
+							</footer>
+						</blockquote>
+					</div>
+				</div>
+			</section>
+
+			
+			<section class="section" id="pricing">
+				<div class="shell">
+					<div class="section__head section__head--center" data-reveal>
+						<p class="eyebrow">Engagements</p>
+						<h2 class="display">Honest pricing, no surprises</h2>
+						<p class="lede">
+							Pay once, up front. If we don't make the introduction, you don't pay for it.
+						</p>
+					</div>
+
+					<div class="pricing">
+						<article class="tier" data-tilt data-reveal>
+							<h3 class="tier__name">The Deep Dive</h3>
+							<p class="tier__for">For people who want clarity first.</p>
+							<div class="tier__price">
+								<b>£450</b>
+								<span>one-off</span>
+							</div>
+							<ul>
+								<li>90-minute strategy session</li>
+								<li>Written personality profile</li>
+								<li>Values &amp; attachment mapping</li>
+								<li>90 days of follow-up</li>
+							</ul>
+							<a class="btn btn--ghost" href="#contact" data-magnetic><span>Start here</span></a>
+						</article>
+
+						<article class="tier tier--featured" data-tilt data-reveal style="--d: 120ms">
+							<span class="tier__flag">Most chosen</span>
+							<h3 class="tier__name">The Introduction</h3>
+							<p class="tier__for">Our signature. Six real introductions.</p>
+							<div class="tier__price">
+								<b>£2,400</b>
+								<span>3 months</span>
+							</div>
+							<ul>
+								<li>Everything in The Deep Dive</li>
+								<li>Six hand-made introductions</li>
+								<li>Pre-date briefing for both sides</li>
+								<li>Unlimited post-date feedback</li>
+								<li>Concierge support throughout</li>
+							</ul>
+							<a class="btn btn--solid" href="#contact" data-magnetic><span>Begin your search</span></a>
+						</article>
+
+						<article class="tier" data-tilt data-reveal style="--d: 240ms">
+							<h3 class="tier__name">The Concierge</h3>
+							<p class="tier__for">You bring the date. We'll make it.</p>
+							<div class="tier__price">
+								<b>£180</b>
+								<span>per date</span>
+							</div>
+							<ul>
+								<li>Venue sourcing &amp; booking</li>
+								<li>Timing and table strategy</li>
+								<li>Dietary &amp; surprise details</li>
+								<li>Available at 48 hours' notice</li>
+							</ul>
+							<a class="btn btn--ghost" href="#contact" data-magnetic><span>Plan a date</span></a>
+						</article>
+					</div>
+				</div>
+			</section>
+
+			
+			<section class="section" id="faq">
+				<div class="shell">
+					<div class="section__head section__head--center" data-reveal>
+						<p class="eyebrow">Questions</p>
+						<h2 class="display">Before you ask</h2>
+					</div>
+
+					<div class="faq">
+						<div class="faq__item" data-faq-item data-reveal>
+							<button class="faq__btn" type="button" data-faq-btn aria-expanded="false">
+								<span>Who is this actually for?</span>
+								<i class="faq__icon" aria-hidden="true"></i>
+							</button>
+							<div class="faq__panel" data-faq-panel>
+								<div>
+									<p>
+										People who are done performing for strangers. Usually 30+, usually successful,
+										usually a little tired of being introduced to the wrong person in the loudest
+										room in town.
+									</p>
+								</div>
+							</div>
+						</div>
+
+						<div class="faq__item" data-faq-item data-reveal style="--d: 80ms">
+							<button class="faq__btn" type="button" data-faq-btn aria-expanded="false">
+								<span>How do you protect my privacy?</span>
+								<i class="faq__icon" aria-hidden="true"></i>
+							</button>
+							<div class="faq__panel" data-faq-panel>
+								<div>
+									<p>
+										We never publish a name, a photo, or a city without explicit written consent.
+										Your details are held under NDA, and we are as vague with your friends as we
+										are with you.
+									</p>
+								</div>
+							</div>
+						</div>
+
+						<div class="faq__item" data-faq-item data-reveal style="--d: 160ms">
+							<button class="faq__btn" type="button" data-faq-btn aria-expanded="false">
+								<span>What if the chemistry just isn't there?</span>
+								<i class="faq__icon" aria-hidden="true"></i>
+							</button>
+							<div class="faq__panel" data-faq-panel>
+								<div>
+									<p>
+										Then it isn't. That is data, not failure — we use it to recalibrate and keep
+										going until the right one lands. The first introduction is on us.
+									</p>
+								</div>
+							</div>
+						</div>
+
+						<div class="faq__item" data-faq-item data-reveal style="--d: 240ms">
+							<button class="faq__btn" type="button" data-faq-btn aria-expanded="false">
+								<span>How long does it actually take?</span>
+								<i class="faq__icon" aria-hidden="true"></i>
+							</button>
+							<div class="faq__panel" data-faq-panel>
+								<div>
+									<p>
+										Two weeks to the first introduction, three months for the full engagement. Some
+										people know within a month. Others take the whole run — both are normal.
+									</p>
+								</div>
+							</div>
+						</div>
+
+						<div class="faq__item" data-faq-item data-reveal style="--d: 320ms">
+							<button class="faq__btn" type="button" data-faq-btn aria-expanded="false">
+								<span>Do you work internationally?</span>
+								<i class="faq__icon" aria-hidden="true"></i>
+							</button>
+							<div class="faq__panel" data-faq-panel>
+								<div>
+									<p>
+										Yes — London, Lisbon, Accra and New York at the moment. If your person is
+										elsewhere, we usually know someone who knows them.
+									</p>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			
+			<section class="section" id="contact">
+				<div class="shell">
+					<div class="contact__panel" data-reveal="scale">
+						<div>
+							<p class="eyebrow">Enquiries</p>
+							<h2 class="display">Let's find your person.</h2>
+							<p class="lede">
+								Tell us a little about yourself. We read every enquiry personally and reply
+								within 48 hours — no automated funnel, no sales sequence.
+							</p>
+
+							<ul class="contact__list">
+								<li>
+									<i aria-hidden="true">✉</i>
+									<span>Write to <b>hello@rose.atelier</b></span>
+								</li>
+								<li>
+									<i aria-hidden="true">☎</i>
+									<span>Call <b>+44 20 7946 0114</b></span>
+								</li>
+								<li>
+									<i aria-hidden="true">◷</i>
+									<span>Mon–Fri, <b>09:00 – 18:00 GMT</b></span>
+								</li>
+								<li>
+									<i aria-hidden="true">❥</i>
+									<span><b>First conversations are always free</b></span>
+								</li>
+							</ul>
+						</div>
+
+						<form class="form" data-form novalidate>
+							<div class="form__row">
+								<div class="field">
+									<label for="f-name">Your name</label>
+									<input id="f-name" name="name" type="text" placeholder="Jane Okafor" required />
+								</div>
+								<div class="field">
+									<label for="f-email">Email</label>
+									<input id="f-email" name="email" type="email" placeholder="jane@example.com" required />
+								</div>
+							</div>
+
+							<div class="form__row">
+								<div class="field">
+									<label for="f-age">Age</label>
+									<input id="f-age" name="age" type="number" min="21" max="99" placeholder="34" required />
+								</div>
+								<div class="field">
+									<label for="f-city">City</label>
+									<input id="f-city" name="city" type="text" placeholder="London" required />
+								</div>
+							</div>
+
+							<div class="field">
+								<label for="f-note">What are you looking for?</label>
+								<textarea
+									id="f-note"
+									name="note"
+									placeholder="The short version is fine. The honest version is better."
+									required></textarea>
+							</div>
+
+							<button class="btn btn--solid" type="submit" data-magnetic="0.22">
+								<span>Send enquiry</span>
+							</button>
+
+							<p class="form__status" data-form-status role="status" aria-live="polite"></p>
+						</form>
+					</div>
+				</div>
+			</section>
 		</main>
-		<Footer />
+
+		<footer class="footer">
+			<div class="shell">
+				<div class="footer__top">
+					<div>
+						<a class="brand" href="#top">
+							<span class="brand__mark" aria-hidden="true">❥</span>
+							<span>Rose</span>
+						</a>
+						<p class="footer__blurb">
+							A private matchmaking atelier. London · Lisbon · Accra · New York.
+						</p>
+					</div>
+
+					<div class="footer__cols">
+						<div class="footer__col">
+							<h4>Services</h4>
+							<ul>
+								<li><a href="#services">The Introduction</a></li>
+								<li><a href="#services">The Deep Dive</a></li>
+								<li><a href="#services">The Concierge</a></li>
+								<li><a href="#services">For Two</a></li>
+							</ul>
+						</div>
+						<div class="footer__col">
+							<h4>Atelier</h4>
+							<ul>
+								<li><a href="#story">Our story</a></li>
+								<li><a href="#process">Process</a></li>
+								<li><a href="#voices">Voices</a></li>
+								<li><a href="#pricing">Pricing</a></li>
+							</ul>
+						</div>
+						<div class="footer__col">
+							<h4>Contact</h4>
+							<ul>
+								<li><a href="#contact">Enquire</a></li>
+								<li><a href="#faq">FAQ</a></li>
+								<li><a href="mailto:hello@rose.atelier">hello@rose.atelier</a></li>
+							</ul>
+						</div>
+					</div>
+				</div>
+
+				<div class="footer__bottom">
+					<p>© 2026 Rose Atelier. Made with <span class="footer__heart" aria-hidden="true">♥</span> and WebGL.</p>
+					<div class="footer__socials">
+						<a href="#top" aria-label="Instagram">IG</a>
+						<a href="#top" aria-label="TikTok">TT</a>
+						<a href="#top" aria-label="LinkedIn">IN</a>
+					</div>
+				</div>
+			</div>
+		</footer>
+
+		<script>
+			import '../scripts/site';
+		</script>
 	</body>
 </html>
