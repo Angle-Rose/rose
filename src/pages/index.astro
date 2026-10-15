@@ -12,6 +12,8 @@ import {
 	GATE,
 	COUNTER,
 	REPLAY,
+	SIGN_KISSES,
+	FOOTER_ORNAMENT,
 } from '../consts';
 
 const mark = (text: string) =>
@@ -61,6 +63,7 @@ const mark = (text: string) =>
 
 				<p class="gate__hint">{GATE.hint}</p>
 				<p class="gate__note">{GATE.note}</p>
+				<p class="ornament" aria-hidden="true">{GATE.ornament}</p>
 			</div>
 		</section>
 
@@ -85,6 +88,7 @@ const mark = (text: string) =>
 									<path d="M4 26 C 60 8, 110 34, 168 18 C 214 6, 258 24, 296 12" />
 								</svg>
 							</span>
+							<p class="letter__kisses" aria-hidden="true">{SIGN_KISSES}</p>
 						</div>
 					</div>
 				</div>
@@ -102,6 +106,7 @@ const mark = (text: string) =>
 						<p class="eyebrow">{COUNTER.eyebrow}</p>
 						<h2 class="together__title">{COUNTER.title}</h2>
 						<p class="together__since">{TOGETHER_SINCE}</p>
+						<p class="ornament" aria-hidden="true">{COUNTER.ornament}</p>
 					</div>
 
 					<div class="clock" data-reveal style="--d: 120ms">
@@ -124,6 +129,8 @@ const mark = (text: string) =>
 						With all my heart, <span>{AUTHOR}</span>
 					</p>
 					<p class="footer__line">Since <b>{TOGETHER_SINCE}</b></p>
+
+					<p class="ornament ornament--footer" aria-hidden="true">{FOOTER_ORNAMENT}</p>
 
 					<div class="footer__actions">
 						<button class="btn btn--ghost" type="button" data-replay data-magnetic="0.25">

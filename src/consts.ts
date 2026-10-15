@@ -1,9 +1,9 @@
 export const SITE_TITLE = 'A Letter for Jasper';
 export const SITE_DESCRIPTION =
-	'A letter, sealed in pink. From Jennelyn, for Jasper — about everything since the day they met.';
+	'A letter, sealed in pink. From Jenirose, for Jasper — about everything since the day they met.';
 
 export const RECIPIENT = 'Jasper';
-export const AUTHOR = 'Jennelyn';
+export const AUTHOR = 'Jenirose';
 export const TOGETHER_SINCE = 'April 28, 2024';
 export const TOGETHER_SINCE_ISO = '2024-04-28';
 
@@ -32,13 +32,38 @@ export const GATE = {
 	open: 'open it',
 	hint: 'tap the seal',
 	note: 'made with love, sealed with pink',
+	ornament: '🌹 ❤ 🌹',
 };
+
+export const PETAL_GLYPHS = [
+	'🌹',
+	'❤',
+	'💗',
+	'💕',
+	'💋',
+	'❥',
+	'✿',
+	'♡',
+	'❀',
+	'💖',
+	'💘',
+	'💝',
+	'🌸',
+	'💞',
+];
+
+export const TRAIL_GLYPHS = ['🌹', '❤', '💗', '💕', '💋', '❥', '💖'];
+
+export const SIGN_KISSES = '💋 💋 💋';
 
 export const COUNTER = {
 	eyebrow: 'and counting',
 	title: 'Since the day we met',
 	since: TOGETHER_SINCE,
+	ornament: '🌹 ❤ 💕 🌹',
 	units: ['days', 'hours', 'minutes', 'seconds'],
 };
+
+export const FOOTER_ORNAMENT = '🌹 ❤ 💋 🌹 ❤ 🌹';
 
 export const REPLAY = 'read it again';

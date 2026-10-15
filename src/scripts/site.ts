@@ -1,3 +1,5 @@
+import { PETAL_GLYPHS, TRAIL_GLYPHS } from '../consts';
+
 const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const FINE = window.matchMedia('(pointer: fine)').matches;
 
@@ -276,13 +278,12 @@ function initPetals() {
   const layer = $('[data-petals]');
   if (!layer) return;
 
-  const glyphs = ['❤', '✿', '❥', '♡', '❀'];
-  const count = window.innerWidth < 720 ? 14 : 24;
+  const count = window.innerWidth < 720 ? 18 : 30;
 
   for (let i = 0; i < count; i++) {
     const p = document.createElement('span');
     p.className = 'petal';
-    p.textContent = glyphs[(Math.random() * glyphs.length) | 0];
+    p.textContent = PETAL_GLYPHS[(Math.random() * PETAL_GLYPHS.length) | 0];
     p.style.left = `${Math.random() * 100}%`;
     p.style.fontSize = `${(9 + Math.random() * 15).toFixed(1)}px`;
     p.style.setProperty('--fall', `${(16 + Math.random() * 18).toFixed(1)}s`);
@@ -304,7 +305,6 @@ function initHeartTrail() {
   layer.setAttribute('aria-hidden', 'true');
   document.body.appendChild(layer);
 
-  const glyphs = ['❤', '♡', '✿', '❥'];
   const pool: HTMLElement[] = [];
   let last = 0;
 
@@ -321,7 +321,7 @@ function initHeartTrail() {
         layer.appendChild(el);
       }
       el.className = 'heart';
-      el.textContent = glyphs[(Math.random() * glyphs.length) | 0];
+      el.textContent = TRAIL_GLYPHS[(Math.random() * TRAIL_GLYPHS.length) | 0];
       el.style.left = `${e.clientX}px`;
       el.style.top = `${e.clientY}px`;
       el.style.setProperty('--drift', `${(Math.random() * 60 - 30).toFixed(0)}px`);

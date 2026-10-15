@@ -51,7 +51,13 @@
     font-style="italic"
     fill="#ffd9e6"
     opacity="0.82"
-  >Forever yours, Jennelyn</text>
+  >Forever yours, Jenirose</text>
+
+  <g font-size="26">
+    <text x="560" y="404">🌹</text>
+    <text x="600" y="404">❤</text>
+    <text x="628" y="404">💋</text>
+  </g>
 
   <rect x="520" y="552" width="160" height="2" fill="#ffcd8a" opacity="0.7" />
 </svg>

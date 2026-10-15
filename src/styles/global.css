@@ -592,6 +592,30 @@ body.is-open .letter {
 	text-align: center;
 	border-top: 1px solid rgba(255, 174, 199, 0.1);
 }
+.ornament {
+	margin: 24px 0 0;
+	font-size: 1.35rem;
+	line-height: 1;
+	letter-spacing: 0.3em;
+	filter: drop-shadow(0 4px 18px rgba(255, 61, 115, 0.55));
+	animation: ornament-sway 4.6s var(--ease-soft) infinite;
+}
+.ornament--footer {
+	margin: 0 0 26px;
+	font-size: 1rem;
+}
+@keyframes ornament-sway {
+	0%, 100% { transform: translateY(0) rotate(-1.2deg); }
+	50% { transform: translateY(-7px) rotate(1.2deg); }
+}
+.letter__kisses {
+	margin: 38px 0 0;
+	font-size: 1.5rem;
+	line-height: 1;
+	letter-spacing: 0.36em;
+	filter: drop-shadow(0 4px 16px rgba(255, 61, 115, 0.5));
+	animation: ornament-sway 5.4s 0.6s var(--ease-soft) infinite;
+}
 .footer__seal {
 	font-family: var(--font-display);
 	font-size: clamp(1.5rem, 3vw, 2rem);
@@ -702,6 +726,8 @@ body.is-open .letter {
 		stroke-dashoffset: 0;
 	}
 	.petal,
+	.ornament,
+	.letter__kisses,
 	.heart-trail .heart,
 	.hl,
 	.scroll-cue i,
