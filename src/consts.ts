@@ -25,6 +25,41 @@ export const LETTER = {
 	closing: 'Forever yours,',
 };
 
+export const ACTS = [
+	{
+		id: 'cup-1',
+		kicker: 'the first layer',
+		title: 'The moment I knew',
+		paras: [0],
+		whisper: 'out of everyone in this world',
+		kisses: 1,
+	},
+	{
+		id: 'cup-2',
+		kicker: 'the second layer',
+		title: 'April 28, 2024',
+		paras: [1],
+		whisper: 'the day everything changed',
+		kisses: 1,
+	},
+	{
+		id: 'cup-3',
+		kicker: 'the third layer',
+		title: 'Through every storm',
+		paras: [2, 3],
+		whisper: 'always, no matter what',
+		kisses: 1,
+	},
+	{
+		id: 'cup-4',
+		kicker: 'the last layer',
+		title: 'Forever yours',
+		paras: [4, 5],
+		whisper: 'every single time',
+		kisses: 2,
+	},
+];
+
 export const GATE = {
 	eyebrow: 'a letter, sealed',
 	title: `For ${RECIPIENT}`,
@@ -32,53 +67,13 @@ export const GATE = {
 	open: 'open it',
 	hint: 'tap the seal',
 	note: 'made with love, sealed with pink',
-	ornament: '🌹 ❤ 🌹',
 };
-
-export const PETAL_GLYPHS = [
-	'🌹',
-	'❤',
-	'💗',
-	'💕',
-	'💋',
-	'❥',
-	'✿',
-	'♡',
-	'❀',
-	'💖',
-	'💘',
-	'💝',
-	'🌸',
-	'💞',
-];
-
-export const TRAIL_GLYPHS = ['🌹', '❤', '💗', '💕', '💋', '❥', '💖'];
-
-export const LOVE_GLYPHS = [
-	'💕',
-	'💗',
-	'💖',
-	'💘',
-	'💝',
-	'💞',
-	'💌',
-	'❥',
-	'♡',
-	'✿',
-];
-
-export const SIGN_KISSES = '💋 💋 💋';
 
 export const COUNTER = {
 	eyebrow: 'and counting',
 	title: 'Since the day we met',
 	since: TOGETHER_SINCE,
-	ornament: '🌹 ❤ 💕 🌹',
 	units: ['days', 'hours', 'minutes', 'seconds'],
 };
-
-export const FOOTER_ORNAMENT = '🌹 ❤ 💋 🌹 ❤ 🌹';
-
-export const OPEN_BURST = 22;
 
 export const REPLAY = 'read it again';

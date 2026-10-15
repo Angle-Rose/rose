@@ -41,6 +41,16 @@
     d="M600 372c-24-30-56-30-56-8 0 14 16 26 56 56 40-30 56-42 56-56 0-22-32-22-56 8Z"
     fill="url(#heart)"
   />
+  <path
+    d="M320 552c-9-11-21-11-21-3 0 5 6 10 21 21 15-11 21-16 21-21 0-8-12-8-21 3Z"
+    fill="url(#heart)"
+    opacity="0.55"
+  />
+  <path
+    d="M880 552c-9-11-21-11-21-3 0 5 6 10 21 21 15-11 21-16 21-21 0-8-12-8-21 3Z"
+    fill="url(#heart)"
+    opacity="0.55"
+  />
 
   <text
     x="600"
@@ -51,10 +61,4 @@
     font-style="italic"
     fill="#5a2a5a"
   >Forever yours, Jenirose</text>
-
-  <g font-size="26">
-    <text x="560" y="556">🌹</text>
-    <text x="600" y="556">❤</text>
-    <text x="628" y="556">💋</text>
-  </g>
 </svg>

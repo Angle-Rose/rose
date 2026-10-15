@@ -13,12 +13,18 @@ uniform float uTime;
 uniform vec2  uMouse;
 uniform float uScroll;
 uniform float uMood;
+uniform float uOpen;
+uniform float uAct;
+uniform float uCut;
 
 float hash(vec2 p) {
   p = fract(p * vec2(123.34, 456.21));
   p += dot(p, p + 45.32);
   return fract(p.x * p.y);
 }
+
+float h11(float n) { return fract(sin(n) * 43758.5453123); }
+float h21(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123); }
 
 float noise(vec2 p) {
   vec2 i = floor(p);
@@ -43,10 +49,115 @@ float fbm(vec2 p) {
   return v;
 }
 
+vec3 actPalette(float idx) {
+  float i = floor(idx + 0.001);
+  float t = clamp(fract(idx), 0.0, 1.0);
+  vec3 a, b, c, d, e;
+  if (i < 0.5) {
+    a = vec3(0.780, 0.651, 0.769);
+    b = vec3(0.847, 0.729, 0.824);
+    c = vec3(0.902, 0.800, 0.871);
+    d = vec3(0.945, 0.863, 0.906);
+    e = vec3(0.980, 0.937, 0.953);
+  } else if (i < 1.5) {
+    a = vec3(0.894, 0.749, 0.788);
+    b = vec3(0.937, 0.812, 0.839);
+    c = vec3(0.961, 0.863, 0.886);
+    d = vec3(0.973, 0.906, 0.925);
+    e = vec3(0.984, 0.949, 0.961);
+  } else if (i < 2.5) {
+    a = vec3(0.769, 0.651, 0.824);
+    b = vec3(0.839, 0.745, 0.902);
+    c = vec3(0.890, 0.824, 0.933);
+    d = vec3(0.933, 0.886, 0.949);
+    e = vec3(0.973, 0.945, 0.976);
+  } else {
+    a = vec3(0.890, 0.761, 0.824);
+    b = vec3(0.937, 0.796, 0.839);
+    c = vec3(0.965, 0.902, 0.800);
+    d = vec3(0.984, 0.949, 0.878);
+    e = vec3(1.000, 0.980, 0.949);
+  }
+  float s = t * 4.0;
+  vec3 r = mix(a, b, clamp(s, 0.0, 1.0));
+  r = mix(r, c, clamp(s - 1.0, 0.0, 1.0));
+  r = mix(r, d, clamp(s - 2.0, 0.0, 1.0));
+  r = mix(r, e, clamp(s - 3.0, 0.0, 1.0));
+  return r;
+}
+
+vec3 blendPalettes(float uAct, float f) {
+  float a = floor(clamp(uAct, 0.0, 3.0));
+  float t = smoothstep(0.0, 1.0, clamp(uAct - a, 0.0, 1.0));
+  return mix(actPalette(a + f), actPalette(min(a + 1.0, 3.0) + f), t);
+}
+
+float actLightness(float uAct) {
+  float x = clamp(uAct, 0.0, 3.0);
+  float v = 0.78;
+  v = mix(v, 0.87, clamp(x, 0.0, 1.0));
+  v = mix(v, 0.93, clamp(x - 1.0, 0.0, 1.0));
+  v = mix(v, 1.00, clamp(x - 2.0, 0.0, 1.0));
+  return v;
+}
+
+float heartField(vec2 p) {
+  float x = p.x;
+  float y = p.y;
+  float a = x * x + y * y - 1.0;
+  return a * a * a - x * x * y * y * y;
+}
+
+vec4 bloomHeart(vec2 uv, float open, float t, out float halo) {
+  float o = clamp(open, 0.0, 1.0);
+  float ap = o * o * (3.0 - 2.0 * o);
+  float scl = mix(2.7, 1.42, ap);
+  float sol = smoothstep(0.70, 1.0, o);
+  float gap = ap * 0.26;
+
+  vec3 plum = vec3(0.353, 0.165, 0.353);
+  vec3 peony = vec3(0.788, 0.392, 0.612);
+  vec3 pink = vec3(0.965, 0.780, 0.878);
+  vec3 gold = vec3(0.788, 0.631, 0.369);
+
+  vec2 p = uv / scl;
+  float f = heartField(vec2(abs(p.x) + gap, p.y));
+
+  float cell = h21(floor((p + vec2(gap, 0.0)) * 9.0));
+  float jit = h11(cell * 57.0 + floor(t * 1.6) * 13.0);
+  float drift = p.y * 0.55 - t * 0.6 + jit * 2.0;
+  f = mix(f, f + (jit - 0.5) * 0.9 + drift * 0.16, sol);
+  f += sol * 0.09 * sin(p.x * 7.0 + t * 2.4 + cell * 6.28);
+
+  float body = 1.0 - smoothstep(-0.34, 0.05, f);
+  float rim = exp(-abs(f) * 20.0) * mix(0.4, 1.5, ap);
+  halo = exp(-max(f, 0.0) * 2.6) * 0.5;
+
+  float spark = 0.0;
+  for (int i = 0; i < 12; i++) {
+    float fi = float(i);
+    float a = h11(fi * 3.1) * 6.2831;
+    float r = 0.30 + h11(fi * 7.7) * 1.05;
+    vec2 sp = vec2(cos(a) * r, sin(a) * r * 0.85 + mod(t * 0.25 + h11(fi * 2.3), 1.0) * 0.5);
+    sp.x += gap * sign(sp.x + 0.0001);
+    spark += exp(-length(p - sp) * 9.0) * (0.35 + 0.65 * h11(fi * 11.0));
+  }
+  spark *= sol * sol;
+
+  vec3 c = mix(peony, plum, smoothstep(0.7, -0.9, p.y));
+  c = mix(c, pink, 0.22 + 0.3 * (1.0 - ap));
+  c = mix(c, gold, rim * 0.75);
+  c += mix(pink, gold, 0.5) * spark;
+
+  float a = body * mix(0.42, 0.92, ap);
+  return vec4(c * (1.0 - smoothstep(0.88, 1.0, o)) * step(0.001, o), a);
+}
+
 void main() {
   vec2 uv = (gl_FragCoord.xy * 2.0 - uRes) / uRes.y;
 
   float mood = clamp(uMood, 0.0, 1.0);
+  float act = clamp(uAct, 0.0, 3.0);
   float t = uTime * mix(0.020, 0.045, mood);
   float sc = uScroll;
 
@@ -64,29 +175,12 @@ void main() {
 
   float f = fbm(uv + 2.8 * r);
   float d = fbm(uv * 2.4 - 1.7 * r + t * 0.6);
-  f = f * 0.82 + d * 0.18;
+  float ramp = clamp(f * 0.82 + d * 0.18, 0.0, 1.0);
 
-  vec3 plum    = vec3(0.353, 0.165, 0.353);
-  vec3 mauve   = vec3(0.753, 0.561, 0.753);
-  vec3 dusky   = vec3(0.918, 0.780, 0.847);
+  vec3 dusk = mix(vec3(0.706, 0.573, 0.714), vec3(0.878, 0.741, 0.831), ramp);
+  vec3 open = blendPalettes(act, ramp) * actLightness(act);
 
-  vec3 sealed = mix(plum, mauve, smoothstep(0.20, 0.55, f));
-  sealed = mix(sealed, dusky, smoothstep(0.55, 0.88, f + 0.12 * r.y));
-
-  vec3 pearl = vec3(1.000, 0.980, 0.988);
-  vec3 blush = vec3(0.996, 0.925, 0.945);
-  vec3 rose  = vec3(0.965, 0.800, 0.863);
-  vec3 peony = vec3(0.902, 0.663, 0.780);
-  vec3 lilac = vec3(0.749, 0.663, 0.878);
-  vec3 champ = vec3(0.929, 0.867, 0.682);
-
-  vec3 open = mix(pearl, blush, smoothstep(0.08, 0.38, f));
-  open = mix(open, rose,   smoothstep(0.32, 0.55, f + 0.10 * q.x));
-  open = mix(open, peony,  smoothstep(0.46, 0.67, f + 0.16 * r.y));
-  open = mix(open, lilac,  smoothstep(0.62, 0.84, f + 0.10 * q.y));
-  open = mix(open, champ,  pow(smoothstep(0.70, 1.0, f), 4.0) * 0.55);
-
-  vec3 col = mix(sealed, open, mood);
+  vec3 col = mix(dusk, open, mood);
 
   float bloom = 0.0;
   for (int i = 0; i < 4; i++) {
@@ -99,21 +193,35 @@ void main() {
     float dist = length(uv - pos);
     bloom += 0.020 / (dist * dist + 0.020);
   }
-  col += bloom * mix(vec3(0.62, 0.42, 0.62), vec3(0.10, 0.04, 0.12), mood) * mix(0.45, 0.22, mood);
+  col -= bloom * mix(vec3(0.07, 0.03, 0.08), vec3(0.02, 0.01, 0.03), mood) * mix(1.4, 0.45, mood);
 
-  float sweep = sin((uv.x * 0.55 + uv.y * 0.30) * 1.15 - uTime * 0.13) * 0.5 + 0.5;
-  col += pow(sweep, 7.0) * 0.075 * mix(vec3(0.85, 0.70, 0.85), vec3(1.0, 0.96, 0.90), mood);
+  float sheen = sin((uv.x * 0.55 + uv.y * 0.30) * 1.15 - uTime * 0.13) * 0.5 + 0.5;
+  col += pow(sheen, 7.0) * 0.05 * mix(vec3(0.58, 0.44, 0.58), vec3(0.82, 0.74, 0.64), mood);
 
   float beat = pow(max(0.0, sin(uTime * 1.55)), 7.0) * (1.0 - mood);
-  col += beat * 0.055 * vec3(0.78, 0.58, 0.80);
+  col -= beat * 0.045 * vec3(0.68, 0.48, 0.70);
 
   float ml = 1.0 - smoothstep(0.0, 0.85, length(uv - uMouse * 0.55));
-  col += ml * ml * mix(vec3(0.18, 0.08, 0.20), vec3(0.05, 0.02, 0.07), mood);
+  col -= ml * ml * mix(vec3(0.09, 0.04, 0.11), vec3(0.03, 0.01, 0.04), mood);
 
   float vig = smoothstep(2.10, 0.30, length(uv * vec2(0.80, 1.0)));
-  col *= mix(mix(0.70, 1.0, vig), mix(0.90, 1.0, vig), mood);
+  col *= mix(mix(0.86, 1.0, vig), mix(0.94, 1.0, vig), mood);
 
-  col += (hash(gl_FragCoord.xy + fract(uTime) * 137.0) - 0.5) * mix(0.022, 0.012, mood);
+  col += (hash(gl_FragCoord.xy + fract(uTime) * 137.0) - 0.5) * 0.016;
+
+  float halo;
+  vec4 heart = bloomHeart(uv, uOpen, uTime, halo);
+  col = mix(col, heart.rgb, heart.a);
+  col += vec3(0.72, 0.60, 0.42) * halo * 0.22 * step(0.001, uOpen) * (1.0 - smoothstep(0.85, 1.0, uOpen));
+
+  float p = clamp(uCut, 0.0, 1.0);
+  if (p > 0.001 && p < 0.999) {
+    float x = p * 3.0 - 1.5;
+    float band = exp(-pow((uv.x - x) * 2.6, 2.0));
+    float fade = sin(p * 3.14159);
+    col = mix(col, vec3(1.0, 0.94, 0.86), band * fade * 0.8);
+    col += vec3(0.09, 0.05, 0.03) * band * fade;
+  }
 
   gl_FragColor = vec4(clamp(col, 0.0, 1.0), 1.0);
 }
@@ -125,10 +233,16 @@ type Uniforms = {
   uMouse: WebGLUniformLocation | null;
   uScroll: WebGLUniformLocation | null;
   uMood: WebGLUniformLocation | null;
+  uOpen: WebGLUniformLocation | null;
+  uAct: WebGLUniformLocation | null;
+  uCut: WebGLUniformLocation | null;
 };
 
 export type LoveFieldController = {
   setMood: (value: number) => void;
+  setAct: (value: number) => void;
+  setOpen: (value: number) => void;
+  cut: () => void;
   destroy: () => void;
 };
 
@@ -166,9 +280,17 @@ export function initLoveField(canvas: HTMLCanvasElement): LoveFieldController {
     (canvas.getContext('webgl', attrs) as WebGLRenderingContext | null) ??
     (canvas.getContext('experimental-webgl', attrs) as WebGLRenderingContext | null);
 
+  const noop: LoveFieldController = {
+    setMood: () => {},
+    setAct: () => {},
+    setOpen: () => {},
+    cut: () => {},
+    destroy: () => {},
+  };
+
   if (!gl) {
     canvas.dataset.webgl = 'off';
-    return { setMood: () => {}, destroy: () => {} };
+    return noop;
   }
 
   const vs = compile(gl, gl.VERTEX_SHADER, VERT);
@@ -177,7 +299,7 @@ export function initLoveField(canvas: HTMLCanvasElement): LoveFieldController {
 
   if (!vs || !fs || !prog) {
     canvas.dataset.webgl = 'off';
-    return { setMood: () => {}, destroy: () => {} };
+    return noop;
   }
 
   gl.attachShader(prog, vs);
@@ -188,7 +310,7 @@ export function initLoveField(canvas: HTMLCanvasElement): LoveFieldController {
 
   if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) {
     canvas.dataset.webgl = 'off';
-    return { setMood: () => {}, destroy: () => {} };
+    return noop;
   }
 
   gl.useProgram(prog);
@@ -207,6 +329,9 @@ export function initLoveField(canvas: HTMLCanvasElement): LoveFieldController {
     uMouse: gl.getUniformLocation(prog, 'uMouse'),
     uScroll: gl.getUniformLocation(prog, 'uScroll'),
     uMood: gl.getUniformLocation(prog, 'uMood'),
+    uOpen: gl.getUniformLocation(prog, 'uOpen'),
+    uAct: gl.getUniformLocation(prog, 'uAct'),
+    uCut: gl.getUniformLocation(prog, 'uCut'),
   };
 
   let scale = 1;
@@ -218,7 +343,13 @@ export function initLoveField(canvas: HTMLCanvasElement): LoveFieldController {
   let lost = false;
 
   let moodTarget = 0;
+  let actTarget = 0;
+  let openTarget = 0;
+  let cutStart = -1;
   let mood = 0;
+  let act = 0;
+  let open = 0;
+  let cut = 0;
 
   const target = { x: 0, y: 0 };
   const smooth = { x: 0, y: 0 };
@@ -304,12 +435,27 @@ export function initLoveField(canvas: HTMLCanvasElement): LoveFieldController {
     smooth.y += (target.y - smooth.y) * k;
     scrollSmooth += (scrollTarget - scrollSmooth) * k;
     mood += (moodTarget - mood) * Math.min(1, k * 0.55);
+    act += (actTarget - act) * Math.min(1, k * 0.5);
+    open += (openTarget - open) * Math.min(1, k * 0.42);
+
+    if (cutStart >= 0) {
+      const p = (now - cutStart) / 900;
+      if (p >= 1) {
+        cutStart = -1;
+        cut = 0;
+      } else {
+        cut = p;
+      }
+    }
 
     gl.uniform2f(u.uRes, canvas.width, canvas.height);
     gl.uniform1f(u.uTime, now / 1000);
     gl.uniform2f(u.uMouse, smooth.x, smooth.y);
     gl.uniform1f(u.uScroll, scrollSmooth);
     gl.uniform1f(u.uMood, mood);
+    gl.uniform1f(u.uAct, act);
+    gl.uniform1f(u.uOpen, open);
+    gl.uniform1f(u.uCut, cut);
 
     gl.drawArrays(gl.TRIANGLES, 0, 3);
 
@@ -322,12 +468,19 @@ export function initLoveField(canvas: HTMLCanvasElement): LoveFieldController {
   window.addEventListener('scroll', onScroll, { passive: true });
   document.addEventListener('visibilitychange', onVisibility);
 
-  gl.uniform2f(u.uRes, canvas.width, canvas.height);
-  gl.uniform1f(u.uTime, 0);
-  gl.uniform2f(u.uMouse, 0, 0);
-  gl.uniform1f(u.uScroll, 0);
-  gl.uniform1f(u.uMood, 0);
-  gl.drawArrays(gl.TRIANGLES, 0, 3);
+  const paint = () => {
+    gl.uniform2f(u.uRes, canvas.width, canvas.height);
+    gl.uniform1f(u.uTime, 0);
+    gl.uniform2f(u.uMouse, 0, 0);
+    gl.uniform1f(u.uScroll, 0);
+    gl.uniform1f(u.uMood, mood);
+    gl.uniform1f(u.uAct, act);
+    gl.uniform1f(u.uOpen, open);
+    gl.uniform1f(u.uCut, cut);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+  };
+
+  paint();
 
   if (gl.getError() === gl.NO_ERROR && !gl.isContextLost()) {
     canvas.dataset.ready = 'true';
@@ -340,6 +493,15 @@ export function initLoveField(canvas: HTMLCanvasElement): LoveFieldController {
   return {
     setMood(value: number) {
       moodTarget = Math.max(0, Math.min(1, value));
+    },
+    setAct(value: number) {
+      actTarget = Math.max(0, Math.min(3, value));
+    },
+    setOpen(value: number) {
+      openTarget = Math.max(0, Math.min(1, value));
+    },
+    cut() {
+      cutStart = performance.now();
     },
     destroy() {
       running = false;

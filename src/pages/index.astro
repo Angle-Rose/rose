@@ -9,11 +9,10 @@ import {
 	TOGETHER_SINCE,
 	TOGETHER_SINCE_ISO,
 	LETTER,
+	ACTS,
 	GATE,
 	COUNTER,
 	REPLAY,
-	SIGN_KISSES,
-	FOOTER_ORNAMENT,
 } from '../consts';
 
 const mark = (text: string) =>
@@ -23,6 +22,9 @@ const mark = (text: string) =>
 			part.startsWith('[[') ? `<em class="hl">${part.slice(2, -2)}</em>` : part
 		)
 		.join('');
+
+const Heart = 'M12 21s-7.2-4.7-9.1-9C1.4 8.4 3.4 4.5 7 4.5c2 0 3.6 1 4.4 2.2h1.2C13.4 5.5 15 4.5 17 4.5c3.6 0 5.6 3.9 4.1 7.5C19.2 16.3 12 21 12 21Z';
+const Kiss = 'M2 15.5C6 9 11 6 15 7.2c3.2.9 6 3.6 9 3.6s5.8-2.7 9-3.6C37 6 42 9 46 15.5c.9 1.5-.2 3.2-1.9 3.2H3.9C2.2 18.7 1.1 17 2 15.5Zm0 4.2h42c1.7 0 2.8 1.7 1.9 3.2C42 29.5 37 26 33 24.8c-3.2-.9-6-3.6-9-3.6s-5.8 2.7-9 3.6C11 26 6 29.5 2 22.9c-.9-1.5.2-3.2 1.9-3.2Z';
 ---
 
 <!doctype html>
@@ -40,12 +42,6 @@ const mark = (text: string) =>
 
 		<LoveField />
 
-		<div class="petals" data-petals aria-hidden="true"></div>
-		<div class="love-float-layer" data-love aria-hidden="true"></div>
-		<div class="progress" data-progress aria-hidden="true"></div>
-		<div class="flash" aria-hidden="true"></div>
-
-		
 		<section class="gate" data-gate aria-label="A sealed letter">
 			<div class="gate__inner">
 				<p class="eyebrow gate__eyebrow">{GATE.eyebrow}</p>
@@ -58,56 +54,91 @@ const mark = (text: string) =>
 
 				<button class="seal" type="button" data-open aria-label="Open the letter">
 					<span class="seal__ring" aria-hidden="true"></span>
-					<span class="seal__heart" aria-hidden="true">❤</span>
+					<svg class="seal__heart" viewBox="0 0 24 24" aria-hidden="true">
+						<path d={Heart} fill="currentColor" />
+					</svg>
 					<span class="seal__label" aria-hidden="true">{GATE.open}</span>
 				</button>
 
 				<p class="gate__hint">{GATE.hint}</p>
 				<p class="gate__note">{GATE.note}</p>
-				<p class="ornament" aria-hidden="true">{GATE.ornament}</p>
 			</div>
 		</section>
 
 		<main id="main">
-			
 			<article class="letter" id="letter">
 				<div class="shell">
 					<h2 class="letter__salutation" data-reveal>{LETTER.salutation}</h2>
 
-					<div class="letter__body">
+					<ul class="act-dots" data-act-dots aria-label="Letter progress">
 						{
-							LETTER.paragraphs.map((para, i) => (
-								<p data-reveal set:html={mark(para)} />
+							ACTS.map((act, i) => (
+								<li>
+									<button
+										class="act-dots__dot"
+										type="button"
+										data-act-dot={i}
+										aria-current={i === 0 ? 'true' : 'false'}
+										aria-label={`Go to ${act.title}`}
+									/>
+								</li>
 							))
 						}
-
-						<div class="letter__signoff" data-reveal="sign">
-							<p class="letter__closing">{LETTER.closing}</p>
-							<span class="letter__name">
-								{AUTHOR}
-								<svg viewBox="0 0 300 40" preserveAspectRatio="none" aria-hidden="true">
-									<path d="M4 26 C 60 8, 110 34, 168 18 C 214 6, 258 24, 296 12" />
-								</svg>
-							</span>
-							<p class="letter__kisses" aria-hidden="true">{SIGN_KISSES}</p>
-						</div>
-					</div>
+					</ul>
 				</div>
 
-				<div class="scroll-cue" aria-hidden="true">
-					keep reading
-					<i></i>
+				<div class="cups">
+					{
+						ACTS.map((act, i) => (
+							<section class="cup-scene" id={act.id} data-act={i}>
+								<div class="cup" data-cup>
+									<span class="cup__fold" aria-hidden="true" />
+									<div class="cup__inner">
+										<p class="cup__kicker">{act.kicker}</p>
+										<h3 class="cup__title">{act.title}</h3>
+										<div class="cup__text">
+											{act.paras.map((p) => (
+												<p data-reveal set:html={mark(LETTER.paragraphs[p])} />
+											))}
+											<p class="whisper" data-reveal>
+												{act.whisper}
+											</p>
+											<div class="kisses" aria-hidden="true">
+												{Array.from({ length: act.kisses }).map(() => (
+													<svg class="kiss" viewBox="0 0 48 32">
+														<path d={Kiss} fill="currentColor" opacity="0.9" />
+													</svg>
+												))}
+											</div>
+										</div>
+									</div>
+								</div>
+							</section>
+						))
+					}
+				</div>
+
+				<div class="shell">
+					<div class="letter__signoff" data-reveal="sign">
+						<p class="letter__closing">{LETTER.closing}</p>
+						<span class="letter__name">
+							{AUTHOR}
+							<svg viewBox="0 0 300 40" preserveAspectRatio="none" aria-hidden="true">
+								<path d="M4 26 C 60 8, 110 34, 168 18 C 214 6, 258 24, 296 12" />
+							</svg>
+						</span>
+					</div>
+
+					<div class="pull-line" aria-hidden="true"></div>
 				</div>
 			</article>
 
-			
 			<section class="together" id="together" data-together data-since={TOGETHER_SINCE_ISO}>
 				<div class="shell">
 					<div class="together__head" data-reveal>
 						<p class="eyebrow">{COUNTER.eyebrow}</p>
 						<h2 class="together__title">{COUNTER.title}</h2>
 						<p class="together__since">{TOGETHER_SINCE}</p>
-						<p class="ornament" aria-hidden="true">{COUNTER.ornament}</p>
 					</div>
 
 					<div class="clock" data-reveal style="--d: 120ms">
@@ -123,15 +154,12 @@ const mark = (text: string) =>
 				</div>
 			</section>
 
-			
 			<footer class="footer">
 				<div class="shell">
 					<p class="footer__seal">
 						With all my heart, <span>{AUTHOR}</span>
 					</p>
 					<p class="footer__line">Since <b>{TOGETHER_SINCE}</b></p>
-
-					<p class="ornament ornament--footer" aria-hidden="true">{FOOTER_ORNAMENT}</p>
 
 					<div class="footer__actions">
 						<button class="btn btn--ghost" type="button" data-replay data-magnetic="0.25">
@@ -140,8 +168,7 @@ const mark = (text: string) =>
 					</div>
 
 					<p class="footer__fine">
-						made for {RECIPIENT} <span class="footer__heart" aria-hidden="true">❤</span> and only
-						for {RECIPIENT}
+						made for {RECIPIENT}, and only for {RECIPIENT}
 					</p>
 				</div>
 			</footer>

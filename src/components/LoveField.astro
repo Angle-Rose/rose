@@ -4,8 +4,6 @@
 <div class="love-field" aria-hidden="true">
 	<canvas class="love-field__canvas" data-love-field></canvas>
 	<div class="love-field__fallback"></div>
-	<div class="love-field__grain"></div>
-	<div class="love-field__scrim"></div>
 </div>
 
 <script>
@@ -19,6 +17,18 @@
 		window.addEventListener('letter:mood', (e) => {
 			field.setMood((e as CustomEvent<number>).detail);
 		});
+
+		window.addEventListener('letter:act', (e) => {
+			field.setAct((e as CustomEvent<number>).detail);
+		});
+
+		window.addEventListener('letter:open', () => {
+			field.setOpen(1);
+		});
+
+		window.addEventListener('letter:cut', () => {
+			field.cut();
+		});
 	}
 </script>
 
@@ -28,8 +38,7 @@
 	z-index: -2;
 	pointer-events: none;
 	overflow: hidden;
-	background: #fdf1f6;
-	transition: background 1.6s var(--ease-out);
+	background: #f7dcea;
 }
 .love-field__canvas {
 	position: absolute;
@@ -38,7 +47,6 @@
 	height: 100%;
 	display: block;
 	opacity: 0;
-	filter: saturate(1.02) contrast(1.01);
 	transition: opacity 1.4s var(--ease-out);
 }
 .love-field__canvas[data-ready='true'] {
@@ -56,35 +64,5 @@
 }
 .love-field__canvas[data-webgl='off'] + .love-field__fallback {
 	display: block;
-}
-.love-field__grain {
-	position: absolute;
-	inset: -12%;
-	opacity: 0.1;
-	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
-	animation: grain-drift 8s steps(6) infinite;
-}
-@keyframes grain-drift {
-	0% { transform: translate(0, 0); }
-	20% { transform: translate(-6%, 4%); }
-	40% { transform: translate(4%, -6%); }
-	60% { transform: translate(-4%, -4%); }
-	80% { transform: translate(6%, 6%); }
-	100% { transform: translate(0, 0); }
-}
-.love-field__scrim {
-	position: absolute;
-	inset: 0;
-	background: linear-gradient(
-		180deg,
-		rgba(255, 252, 254, 0.88) 0%,
-		rgba(255, 250, 253, 0.52) 22%,
-		rgba(255, 248, 252, 0.54) 55%,
-		rgba(253, 241, 246, 0.8) 100%
-	);
-	transition: opacity 1.6s var(--ease-out);
-}
-@media (prefers-reduced-motion: reduce) {
-	.love-field__grain { animation: none; }
 }
 </style>
