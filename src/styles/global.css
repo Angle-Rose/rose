@@ -201,6 +201,62 @@ body.is-open .progress {
 	75% { transform: translate3d(calc(var(--drift) * 0.7), -75vh, 0) rotate(220deg); }
 	100% { transform: translate3d(0, -108vh, 0) rotate(360deg); }
 }
+.love-float-layer {
+	position: fixed;
+	inset: 0;
+	z-index: -1;
+	pointer-events: none;
+	overflow: hidden;
+}
+.love-float {
+	position: absolute;
+	bottom: -14vh;
+	line-height: 1;
+	will-change: transform, opacity;
+	animation: love-rise var(--rise, 20s) linear infinite;
+	animation-delay: var(--delay, 0s);
+}
+.love-float__heart {
+	display: block;
+	opacity: var(--op, 0.4);
+	will-change: transform;
+	filter: drop-shadow(0 3px 12px rgba(201, 100, 156, 0.35));
+	animation: heart-open var(--beat, 3s) ease-in-out infinite;
+}
+@keyframes love-rise {
+	0% { transform: translate3d(0, 0, 0); opacity: 0; }
+	10% { opacity: var(--op, 0.4); }
+	25% { transform: translate3d(calc(var(--drift, 0px) * 0.6), -25vh, 0); }
+	50% { transform: translate3d(calc(var(--drift, 0px) * -1), -50vh, 0); }
+	75% { transform: translate3d(calc(var(--drift, 0px) * 0.6), -75vh, 0); }
+	90% { opacity: var(--op, 0.4); }
+	100% { transform: translate3d(calc(var(--drift, 0px) * -1), -110vh, 0); opacity: 0; }
+}
+@keyframes heart-open {
+	0%, 100% { transform: scale(0.58); }
+	12% { transform: scale(1.06); }
+	26% { transform: scale(0.72); }
+	39% { transform: scale(0.97); }
+	62% { transform: scale(0.58); }
+}
+.burst-heart {
+	position: fixed;
+	z-index: 85;
+	line-height: 1;
+	transform: translate(-50%, -50%);
+	animation: burst var(--burst, 1100ms) var(--ease-out) forwards;
+	pointer-events: none;
+	filter: drop-shadow(0 3px 10px rgba(201, 100, 156, 0.4));
+}
+@keyframes burst {
+	0% { transform: translate(-50%, -50%) scale(0.25); opacity: 0; }
+	14% { opacity: 1; }
+	100% {
+		transform: translate(calc(-50% + var(--bx, 0px)), calc(-50% + var(--by, -40px)))
+			scale(1.15) rotate(var(--br, 0deg));
+		opacity: 0;
+	}
+}
 .heart-trail {
 	position: fixed;
 	inset: 0;
@@ -326,6 +382,7 @@ body.is-opening .gate {
 	line-height: 1;
 	color: var(--pearl);
 	text-shadow: 0 4px 18px rgba(58, 35, 71, 0.4);
+	animation: heart-open 2.6s ease-in-out infinite;
 }
 .seal__label {
 	position: absolute;
@@ -384,8 +441,11 @@ body.is-opening .gate {
 	font-size: 1rem;
 }
 @keyframes ornament-sway {
-	0%, 100% { transform: translateY(0) rotate(-1.2deg); }
-	50% { transform: translateY(-7px) rotate(1.2deg); }
+	0%, 100% { transform: translateY(0) rotate(-1.2deg) scale(0.92); }
+	12% { transform: translateY(-7px) rotate(-0.4deg) scale(1.08); }
+	26% { transform: translateY(-3px) rotate(0.6deg) scale(0.95); }
+	39% { transform: translateY(-6px) rotate(1.2deg) scale(1.03); }
+	62% { transform: translateY(0) rotate(-1.2deg) scale(0.92); }
 }
 .letter__kisses {
 	margin: 38px 0 0;
@@ -738,6 +798,10 @@ body.is-open .letter {
 	.petal,
 	.ornament,
 	.letter__kisses,
+	.love-float,
+	.love-float__heart,
+	.burst-heart,
+	.seal__heart,
 	.heart-trail .heart,
 	.hl,
 	.scroll-cue i,

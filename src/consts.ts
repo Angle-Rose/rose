@@ -54,6 +54,19 @@ export const PETAL_GLYPHS = [
 
 export const TRAIL_GLYPHS = ['🌹', '❤', '💗', '💕', '💋', '❥', '💖'];
 
+export const LOVE_GLYPHS = [
+	'💕',
+	'💗',
+	'💖',
+	'💘',
+	'💝',
+	'💞',
+	'💌',
+	'❥',
+	'♡',
+	'✿',
+];
+
 export const SIGN_KISSES = '💋 💋 💋';
 
 export const COUNTER = {
@@ -65,5 +78,7 @@ export const COUNTER = {
 };
 
 export const FOOTER_ORNAMENT = '🌹 ❤ 💋 🌹 ❤ 🌹';
+
+export const OPEN_BURST = 22;
 
 export const REPLAY = 'read it again';

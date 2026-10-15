@@ -1,4 +1,4 @@
-import { PETAL_GLYPHS, TRAIL_GLYPHS } from '../consts';
+import { PETAL_GLYPHS, TRAIL_GLYPHS, LOVE_GLYPHS, OPEN_BURST } from '../consts';
 
 const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const FINE = window.matchMedia('(pointer: fine)').matches;
@@ -295,6 +295,82 @@ function initPetals() {
   }
 }
 
+function initLoveFloat() {
+  if (REDUCED) return;
+
+  const layer = $('[data-love]');
+  if (!layer) return;
+
+  const count = window.innerWidth < 720 ? 12 : 18;
+
+  for (let i = 0; i < count; i++) {
+    const wrap = document.createElement('div');
+    wrap.className = 'love-float';
+
+    const heart = document.createElement('span');
+    heart.className = 'love-float__heart';
+    heart.textContent = LOVE_GLYPHS[(Math.random() * LOVE_GLYPHS.length) | 0];
+
+    wrap.appendChild(heart);
+    wrap.style.left = `${Math.random() * 100}%`;
+    wrap.style.fontSize = `${(14 + Math.random() * 24).toFixed(1)}px`;
+    wrap.style.setProperty('--rise', `${(16 + Math.random() * 18).toFixed(1)}s`);
+    wrap.style.setProperty('--delay', `${(-Math.random() * 30).toFixed(1)}s`);
+    wrap.style.setProperty('--beat', `${(2.1 + Math.random() * 1.9).toFixed(1)}s`);
+    wrap.style.setProperty('--op', (0.3 + Math.random() * 0.4).toFixed(2));
+    wrap.style.setProperty('--drift', `${(Math.random() * 80 - 40).toFixed(0)}px`);
+
+    layer.appendChild(wrap);
+  }
+}
+
+type BurstFn = (x: number, y: number, amount: number, power?: number) => void;
+
+let burstFn: BurstFn | null = null;
+
+function initLoveBurst() {
+  if (REDUCED) return;
+
+  const layer = $('[data-love]');
+  if (!layer) return;
+
+  let last = 0;
+
+  const burst: BurstFn = (x, y, amount, power = 1) => {
+    for (let i = 0; i < amount; i++) {
+      const el = document.createElement('span');
+      el.className = 'burst-heart';
+      el.textContent = LOVE_GLYPHS[(Math.random() * LOVE_GLYPHS.length) | 0];
+      el.style.left = `${x}px`;
+      el.style.top = `${y}px`;
+      el.style.fontSize = `${(13 + Math.random() * 17).toFixed(1)}px`;
+
+      const angle = (Math.PI * 2 * i) / amount + Math.random() * 0.5;
+      const reach = (46 + Math.random() * 88) * power;
+      el.style.setProperty('--bx', `${(Math.cos(angle) * reach).toFixed(0)}px`);
+      el.style.setProperty('--by', `${(Math.sin(angle) * reach - 34).toFixed(0)}px`);
+      el.style.setProperty('--br', `${(Math.random() * 90 - 45).toFixed(0)}deg`);
+      el.style.setProperty('--burst', `${(820 + Math.random() * 520).toFixed(0)}ms`);
+
+      layer.appendChild(el);
+      window.setTimeout(() => el.remove(), 1500);
+    }
+  };
+
+  burstFn = burst;
+
+  document.addEventListener(
+    'pointerdown',
+    (e) => {
+      const now = performance.now();
+      if (now - last < 90) return;
+      last = now;
+      burst(e.clientX, e.clientY, 6, 0.85);
+    },
+    { passive: true }
+  );
+}
+
 function initHeartTrail() {
   if (!FINE || REDUCED) return;
   if (window.matchMedia('(hover: none)').matches) return;
@@ -351,6 +427,11 @@ function initGate() {
     window.dispatchEvent(new CustomEvent('letter:mood', { detail: 1 }));
     gate.setAttribute('aria-hidden', 'true');
 
+    if (burstFn) {
+      const r = seal.getBoundingClientRect();
+      burstFn(r.left + r.width / 2, r.top + r.height / 2, OPEN_BURST, 1.4);
+    }
+
     window.setTimeout(() => {
       document.body.classList.remove('is-opening');
       document.body.classList.add('is-open');
@@ -384,6 +465,8 @@ function initReplay() {
 
 function boot() {
   initPetals();
+  initLoveFloat();
+  initLoveBurst();
   initSplitHeadlines();
   initCounters();
   initGate();
